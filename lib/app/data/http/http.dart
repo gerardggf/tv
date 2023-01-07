@@ -1,9 +1,17 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart';
 
 import '../../domain/either.dart';
+
+part 'failure.dart';
+part 'logs.dart';
+part 'parse_response_body.dart';
+
+enum HttpMethod { get, post, patch, delete, put }
 
 class Http {
   Http({
@@ -18,16 +26,19 @@ class Http {
   final String _baseUrl;
   final String _apiKey;
 
-  Future<Either<HttpFailure, String>> request(
+  Future<Either<HttpFailure, R>> request<R>(
     String path, {
+    required R Function(dynamic responseBody) onSuccess,
     HttpMethod method = HttpMethod.get,
     Map<String, String> headers = const {},
     Map<String, String> queryParams = const {},
-    bool userApiKey = true,
+    bool useApiKey = true,
     Map<String, dynamic> body = const {},
   }) async {
+    Map<String, dynamic> logs = {};
+    StackTrace? stackTrace;
     try {
-      if (userApiKey) {
+      if (useApiKey) {
         queryParams = {...queryParams, 'api_key': _apiKey};
       }
       Uri url = Uri.parse(
@@ -45,6 +56,11 @@ class Http {
       late final Response response;
       final bodyString = jsonEncode(body);
 
+      logs = {
+        'url': url.toString(),
+        'method': method.name,
+        'body': body,
+      };
       switch (method) {
         case HttpMethod.get:
           response = await _client.get(url);
@@ -80,35 +96,52 @@ class Http {
       }
 
       final statusCode = response.statusCode;
+      final responseBody = _parseResponseBody(response.body);
+
+      logs = {
+        ...logs,
+        'startTime': DateTime.now().toString(),
+        'statusCode': statusCode,
+        'responseBody': responseBody,
+      };
+
       if (statusCode >= 200 && statusCode < 300) {
-        return Either.right(response.body);
+        return Either.right(
+          onSuccess(responseBody),
+        );
       }
 
       return Either.left(
         HttpFailure(statusCode: statusCode),
       );
-    } catch (e) {
+    } catch (e, s) {
+      stackTrace = s;
+      logs = {
+        ...logs,
+        'exception': e.runtimeType,
+      };
       if (e is SocketException || e is ClientException) {
+        logs = {
+          ...logs,
+          'exception': 'NetworkException',
+        };
         return Either.left(
           HttpFailure(
             exception: NetworkException(),
           ),
         );
       }
+
       return Either.left(
         HttpFailure(exception: e),
       );
+    } finally {
+      logs = {
+        ...logs,
+        'endTime': DateTime.now().toString(),
+      };
+
+      _printLogs(logs, stackTrace);
     }
   }
 }
-
-class HttpFailure {
-  HttpFailure({this.statusCode, this.exception});
-
-  final int? statusCode;
-  final Object? exception;
-}
-
-class NetworkException {}
-
-enum HttpMethod { get, post, patch, delete, put }
