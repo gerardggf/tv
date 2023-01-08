@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../../../domain/enums.dart';
 import '../../../../domain/repositories/authentication_repository.dart';
 import '../../../routes/routes.dart';
+import '../controller/sign_in_controller.dart';
 
 class SignInView extends StatefulWidget {
   const SignInView({super.key});
@@ -13,82 +14,75 @@ class SignInView extends StatefulWidget {
 }
 
 class _SignInViewState extends State<SignInView> {
-  String _username = "", _password = "";
-  bool _fetching = false;
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Form(
-            child: AbsorbPointer(
-              absorbing: _fetching,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  TextFormField(
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    onChanged: (text) {
-                      setState(
-                        () {
-                          _username = text.trim().toLowerCase();
+    return ChangeNotifierProvider(
+      create: (_) => SignInController(),
+      child: Scaffold(
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Form(
+              child: Builder(builder: (context) {
+                final controller = Provider.of<SignInController>(context);
+                return AbsorbPointer(
+                  absorbing: controller.fetching,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      TextFormField(
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        onChanged: (text) {
+                          controller.onUsernameChanged(text);
                         },
-                      );
-                    },
-                    validator: (text) {
-                      text = text?.trim().toLowerCase() ?? "";
+                        validator: (text) {
+                          text = text?.trim().toLowerCase() ?? "";
 
-                      if (text.isEmpty) {
-                        return "Invalid username";
-                      }
-                      return null;
-                    },
-                    decoration: const InputDecoration(hintText: "username"),
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  TextFormField(
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    onChanged: (text) {
-                      setState(
-                        () {
-                          _password = text.replaceAll(" ", "");
+                          if (text.isEmpty) {
+                            return "Invalid username";
+                          }
+                          return null;
                         },
-                      );
-                    },
-                    validator: (text) {
-                      text = text?.replaceAll(" ", "") ?? "";
+                        decoration: const InputDecoration(hintText: "username"),
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      TextFormField(
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        onChanged: (text) {
+                          controller.onPasswordChanged(text);
+                        },
+                        validator: (text) {
+                          text = text?.replaceAll(" ", "") ?? "";
 
-                      if (text.length < 4) {
-                        return "Invalid password";
-                      }
-                      return null;
-                    },
-                    decoration: const InputDecoration(hintText: "password"),
+                          if (text.length < 4) {
+                            return "Invalid password";
+                          }
+                          return null;
+                        },
+                        decoration: const InputDecoration(hintText: "password"),
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      if (controller.fetching)
+                        const CircularProgressIndicator()
+                      else
+                        MaterialButton(
+                          onPressed: () {
+                            final isValid = Form.of(context)!.validate();
+                            if (isValid) {
+                              _submit(context);
+                            }
+                          },
+                          color: Colors.blue,
+                          child: const Text("Sign in"),
+                        ),
+                    ],
                   ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  Builder(builder: (context) {
-                    if (_fetching) {
-                      return const CircularProgressIndicator();
-                    }
-                    return MaterialButton(
-                      onPressed: () {
-                        final isValid = Form.of(context)!.validate();
-                        if (isValid) {
-                          _submit(context);
-                        }
-                      },
-                      color: Colors.blue,
-                      child: const Text("Sign in"),
-                    );
-                  }),
-                ],
-              ),
+                );
+              }),
             ),
           ),
         ),
@@ -97,16 +91,13 @@ class _SignInViewState extends State<SignInView> {
   }
 
   Future<void> _submit(BuildContext context) async {
-    setState(() {
-      _fetching = true;
-    });
-    final result = await Provider.of<AuthenticationRepository>(
-      context,
-      listen: false,
-    ).signIn(
-      _username,
-      _password,
-    );
+    final SignInController controller = context.read();
+    controller.onFetchingChanged(true);
+
+    final result = await context.read<AuthenticationRepository>().signIn(
+          controller.username,
+          controller.password,
+        );
 
     if (!mounted) {
       return;
@@ -114,9 +105,7 @@ class _SignInViewState extends State<SignInView> {
 
     result.when(
       (failure) {
-        setState(() {
-          _fetching = false;
-        });
+        controller.onFetchingChanged(false);
         final message = {
           SignInFailure.notFound: "Not found",
           SignInFailure.unauthorized: "Invalid password",

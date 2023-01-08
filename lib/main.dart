@@ -19,26 +19,30 @@ void main() {
   runApp(
     MultiProvider(
       providers: [
-        Provider<AccountRepository>(
-          create: (_) => AccountRepositoryImpl(),
-        ),
+        Provider<AccountRepository>(create: (_) {
+          return AccountRepositoryImpl();
+        }),
         Provider<ConnectivityRepository>(
-          create: (_) => ConnectivityRepositoryImpl(
-            Connectivity(),
-            InternetChecker(),
-          ),
+          create: (_) {
+            return ConnectivityRepositoryImpl(
+              Connectivity(),
+              InternetChecker(),
+            );
+          },
         ),
         Provider<AuthenticationRepository>(
-          create: (_) => AuthenticationRepositoryImpl(
-            const FlutterSecureStorage(),
-            AuthenticationAPI(
-              Http(
-                client: http.Client(),
-                baseUrl: 'https://api.themoviedb.org/3',
-                apiKey: 'f41a23c2b3c209cdb9845a666c1143b5',
+          create: (_) {
+            return AuthenticationRepositoryImpl(
+              const FlutterSecureStorage(),
+              AuthenticationAPI(
+                Http(
+                  client: http.Client(),
+                  baseUrl: 'https://api.themoviedb.org/3',
+                  apiKey: 'f41a23c2b3c209cdb9845a666c1143b5',
+                ),
               ),
-            ),
-          ),
+            );
+          },
         ),
       ],
       child: const MyApp(),
