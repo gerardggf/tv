@@ -3,6 +3,8 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'user.g.dart';
 
+//si falla alguna ejecución del json serializable checkear bien este archio y el .g que no haya alguna variable mal pusta o mal leída
+
 @JsonSerializable()
 class User extends Equatable {
   const User({
