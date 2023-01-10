@@ -30,7 +30,7 @@ class AuthenticationAPI {
       '/authentication/token/new',
       onSuccess: (responseBody) {
         final json = responseBody as Map;
-        return json["request_token"] as String;
+        return json['request_token'] as String;
       },
     );
 

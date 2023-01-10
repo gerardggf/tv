@@ -24,7 +24,7 @@ class SignInController extends StateNotifier<SignInState> {
   void onPasswordChanged(String text) {
     onlyUpdate(
       state.copyWith(
-        password: text.replaceAll(" ", ""),
+        password: text.replaceAll(' ', ''),
       ),
     );
   }

@@ -1,14 +1,20 @@
 import '../../../domain/models/user.dart';
+import '../../../domain/repositories/authentication_repository.dart';
 import '../state_notifier.dart';
 
 class SessionController extends StateNotifier<User?> {
-  SessionController() : super(null);
+  SessionController({
+    required this.authenticationRepository,
+  }) : super(null);
+
+  final AuthenticationRepository authenticationRepository;
 
   void setUser(User user) {
     state = user;
   }
 
-  void signOut() {
-    state = null;
+  Future<void> signOut() async {
+    authenticationRepository.signOut;
+    onlyUpdate(null);
   }
 }

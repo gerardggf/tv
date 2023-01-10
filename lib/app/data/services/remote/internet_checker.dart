@@ -8,15 +8,17 @@ class InternetChecker {
     try {
       if (kIsWeb) {
         final response = await get(
-          Uri.parse("8.8.8.8"),
+          Uri.parse('8.8.8.8'),
         );
         return response.statusCode == 200;
       } else {
-        final list = await InternetAddress.lookup("google.com");
+        final list = await InternetAddress.lookup('google.com');
         return list.isNotEmpty && list.first.rawAddress.isNotEmpty;
       }
     } catch (e) {
-      print(e);
+      if (kDebugMode) {
+        print(e);
+      }
       return false;
     }
   }

@@ -2,8 +2,8 @@ import 'package:equatable/equatable.dart';
 
 class SignInState extends Equatable {
   const SignInState({
-    this.username = "",
-    this.password = "",
+    this.username = '',
+    this.password = '',
     this.fetching = false,
   });
 

@@ -23,7 +23,7 @@ class SubmitButton extends StatelessWidget {
         }
       },
       color: Colors.blue,
-      child: const Text("Sign in"),
+      child: const Text('Sign in'),
     );
   }
 
@@ -39,10 +39,10 @@ class SubmitButton extends StatelessWidget {
     result.when(
       (failure) {
         final message = {
-          SignInFailure.notFound: "Not found",
-          SignInFailure.unauthorized: "Invalid password",
-          SignInFailure.unknown: "Unkwnown",
-          SignInFailure.network: "Network error",
+          SignInFailure.notFound: 'Not found',
+          SignInFailure.unauthorized: 'Invalid password',
+          SignInFailure.unknown: 'Unkwnown',
+          SignInFailure.network: 'Network error',
         }[failure];
 
         ScaffoldMessenger.of(context).showSnackBar(

@@ -1,6 +1,6 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-const _key = "session_id";
+const _key = 'session_id';
 
 class SessionService {
   SessionService(this._secureStorage);

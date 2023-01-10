@@ -42,7 +42,7 @@ class Http {
         queryParams = {...queryParams, 'api_key': _apiKey};
       }
       Uri url = Uri.parse(
-        path.startsWith('http') ? path : "$_baseUrl$path",
+        path.startsWith('http') ? path : '$_baseUrl$path',
       );
       if (queryParams.isNotEmpty) {
         url = url.replace(

@@ -33,14 +33,14 @@ class SignInView extends StatelessWidget {
                           controller.onUsernameChanged(text);
                         },
                         validator: (text) {
-                          text = text?.trim().toLowerCase() ?? "";
+                          text = text?.trim().toLowerCase() ?? '';
 
                           if (text.isEmpty) {
-                            return "Invalid username";
+                            return 'Invalid username';
                           }
                           return null;
                         },
-                        decoration: const InputDecoration(hintText: "username"),
+                        decoration: const InputDecoration(hintText: 'username'),
                       ),
                       const SizedBox(
                         height: 20,
@@ -51,14 +51,14 @@ class SignInView extends StatelessWidget {
                           controller.onPasswordChanged(text);
                         },
                         validator: (text) {
-                          text = text?.replaceAll(" ", "") ?? "";
+                          text = text?.replaceAll(' ', '') ?? '';
 
                           if (text.length < 4) {
-                            return "Invalid password";
+                            return 'Invalid password';
                           }
                           return null;
                         },
-                        decoration: const InputDecoration(hintText: "password"),
+                        decoration: const InputDecoration(hintText: 'password'),
                       ),
                       const SizedBox(
                         height: 20,
