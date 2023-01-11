@@ -22,6 +22,10 @@ class _HomeViewState extends State<HomeView> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            if (user.avatarPath != null)
+              Image.network(
+                'https://image.tmdb.org/t/p/w500${user.avatarPath}',
+              ),
             Text(
               user.id.toString(),
               style: const TextStyle(
