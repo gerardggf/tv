@@ -15,8 +15,8 @@ class AccountAPI {
       },
     );
     return result.when(
-      (_) => null,
-      (user) => user,
+      left: (_) => null,
+      right: (user) => user,
     );
   }
 }

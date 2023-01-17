@@ -1,5 +1,5 @@
-import '../../../domain/either.dart';
-import '../../../domain/enums.dart';
+import '../../../domain/either/either.dart';
+import '../../../domain/failures/sign_in/sign_in_failure.dart';
 import '../../http/http.dart';
 
 class AuthenticationAPI {
@@ -10,19 +10,35 @@ class AuthenticationAPI {
     if (failure.statusCode != null) {
       switch (failure.statusCode!) {
         case 401:
-          return Either.left(SignInFailure.unauthorized);
+          if (failure.data is Map &&
+              (failure.data as Map)['status_code'] == 32) {
+            return Either.left(
+              SignInFailure.notVerified(),
+            );
+          }
+          return Either.left(
+            SignInFailure.unauthorized(),
+          );
 
         case 404:
-          return Either.left(SignInFailure.notFound);
+          return Either.left(
+            SignInFailure.notFound(),
+          );
 
         default:
-          return Either.left(SignInFailure.unknown);
+          return Either.left(
+            SignInFailure.unknown(),
+          );
       }
     }
     if (failure.exception is NetworkException) {
-      return Either.left(SignInFailure.network);
+      return Either.left(
+        SignInFailure.network(),
+      );
     }
-    return Either.left(SignInFailure.unknown);
+    return Either.left(
+      SignInFailure.unknown(),
+    );
   }
 
   Future<Either<SignInFailure, String>> createRequestToken() async {
@@ -35,8 +51,8 @@ class AuthenticationAPI {
     );
 
     return result.when(
-      _handleFailure,
-      (requestToken) {
+      left: _handleFailure,
+      right: (requestToken) {
         return Either.right(requestToken);
       },
     );
@@ -63,8 +79,8 @@ class AuthenticationAPI {
     );
 
     return result.when(
-      _handleFailure,
-      (newRequestToken) {
+      left: _handleFailure,
+      right: (newRequestToken) {
         return Either.right(newRequestToken);
       },
     );
@@ -84,8 +100,8 @@ class AuthenticationAPI {
     );
 
     return result.when(
-      _handleFailure,
-      (sessionId) {
+      left: _handleFailure,
+      right: (sessionId) {
         return Either.right(sessionId);
       },
     );
