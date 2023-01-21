@@ -4,6 +4,7 @@ import '../../../domain/failures/http_request/http_request_failure.dart';
 import '../../../domain/models/media/media.dart';
 import '../../../domain/typedefs.dart';
 import '../../http/http.dart';
+import '../utils/handle_failure.dart';
 
 class TrendingAPI {
   final Http _http;
@@ -16,7 +17,7 @@ class TrendingAPI {
     final result = await _http.request(
       '/trending/all/${timeWindow.name}',
       onSuccess: (json) {
-        final list = json['result'] as List<Json>;
+        final list = List<Json>.from(json['results']);
 
         return list
             .where(
@@ -27,6 +28,10 @@ class TrendingAPI {
             )
             .toList();
       },
+    );
+    return result.when(
+      left: handleHttpFailure,
+      right: (list) => Either.right(list),
     );
   }
 }
