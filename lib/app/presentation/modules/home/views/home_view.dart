@@ -15,9 +15,10 @@ class _HomeViewState extends State<HomeView> {
     return Scaffold(
       body: SafeArea(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
           children: const [
+            SizedBox(
+              height: 10,
+            ),
             TrendingList(),
           ],
         ),

@@ -6,6 +6,8 @@ import '../../../../domain/enums.dart';
 import '../../../../domain/failures/http_request/http_request_failure.dart';
 import '../../../../domain/models/media/media.dart';
 import '../../../../domain/repositories/trending_repository.dart';
+import 'trending_tile.dart';
+import 'trending_time_window.dart';
 
 typedef EitherListMedia = Either<HttpRequestFailure, List<Media>>;
 
@@ -17,35 +19,82 @@ class TrendingList extends StatefulWidget {
 }
 
 class _TrendingListState extends State<TrendingList> {
-  late final Future<EitherListMedia> _future;
+  TrendingRepository get _repository => context.read();
+  late Future<EitherListMedia> _future;
+  TimeWindow _timeWindow = TimeWindow.day;
 
   @override
   void initState() {
     super.initState();
-    final TrendingRepository repository = context.read();
-    _future = repository.getMoviesAndSeries(TimeWindow.day);
+    _future = _repository.getMoviesAndSeries(_timeWindow);
   }
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 250,
-      child: Center(
-        child: FutureBuilder<EitherListMedia>(
-          future: _future,
-          builder: (_, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const CircularProgressIndicator();
-            }
-            if (snapshot.hasError) {
-              return const Text('Error');
-            }
-            return Text(
-              snapshot.data!.toString(),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        TrendingTimeWindow(
+          timeWindow: _timeWindow,
+          onChanged: (timeWindow) {
+            setState(
+              () {
+                _timeWindow = timeWindow;
+                _future = _repository.getMoviesAndSeries(_timeWindow);
+              },
             );
           },
         ),
-      ),
+        const SizedBox(
+          height: 10,
+        ),
+        AspectRatio(
+          aspectRatio: 16 / 8,
+          child: LayoutBuilder(
+            builder: (_, constraints) {
+              final width = constraints.maxHeight * 0.65;
+              return Center(
+                child: FutureBuilder<EitherListMedia>(
+                  key: ValueKey(_future),
+                  future: _future,
+                  builder: (_, snapshot) {
+                    if (!snapshot.hasData) {
+                      return const CircularProgressIndicator();
+                    }
+
+                    return snapshot.data!.when(
+                      left: (failure) {
+                        return Text(
+                          failure.toString(),
+                        );
+                      },
+                      right: (list) {
+                        return ListView.separated(
+                          padding: const EdgeInsets.symmetric(horizontal: 15),
+                          scrollDirection: Axis.horizontal,
+                          itemCount: list.length,
+                          itemBuilder: ((context, index) {
+                            final media = list[index];
+                            return TrendingTile(
+                              media: media,
+                              width: width,
+                            );
+                          }),
+                          separatorBuilder: (_, __) {
+                            return const SizedBox(
+                              width: 10,
+                            );
+                          },
+                        );
+                      },
+                    );
+                  },
+                ),
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 }

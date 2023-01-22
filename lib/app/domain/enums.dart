@@ -1,1 +1,1 @@
-enum TimeWindow { day, weekday }
+enum TimeWindow { day, week }

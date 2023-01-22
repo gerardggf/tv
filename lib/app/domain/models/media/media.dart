@@ -5,6 +5,13 @@ import '../../typedefs.dart';
 part 'media.freezed.dart';
 part 'media.g.dart';
 
+enum MediaType {
+  @JsonValue('movie')
+  movie,
+  @JsonValue('tv')
+  tv,
+}
+
 @freezed
 class Media with _$Media {
   factory Media({
@@ -26,7 +33,7 @@ class Media with _$Media {
     @JsonKey(name: 'vote_average')
         required double voteAverage,
     @JsonKey(name: 'media_type')
-        required String type,
+        required MediaType type,
   }) = _Media;
 
   factory Media.fromJson(Json json) => _$MediaFromJson(json);
