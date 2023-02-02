@@ -16,7 +16,7 @@ class SubmitButton extends StatelessWidget {
     }
     return MaterialButton(
       onPressed: () {
-        final isValid = Form.of(context)!.validate();
+        final isValid = Form.of(context).validate();
         if (isValid) {
           _submit(context);
         }
