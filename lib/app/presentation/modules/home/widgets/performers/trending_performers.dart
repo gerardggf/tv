@@ -1,14 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../../../../domain/either/either.dart';
-import '../../../../../domain/failures/http_request/http_request_failure.dart';
-import '../../../../../domain/models/performer/performer.dart';
-import '../../../../../domain/repositories/trending_repository.dart';
 import '../../../../global/widgets/request_fail.dart';
+import '../../controller/home_controller.dart';
+import '../../controller/state/home_state.dart';
 import 'performer_tile.dart';
-
-typedef EitherListPerformer = Either<HttpRequestFailure, List<Performer>>;
 
 class TrendingPerformers extends StatefulWidget {
   const TrendingPerformers({super.key});
@@ -18,16 +14,7 @@ class TrendingPerformers extends StatefulWidget {
 }
 
 class _TrendingPerformersState extends State<TrendingPerformers> {
-  late Future<EitherListPerformer> _future;
-  late final PageController _pageController;
-
-  @override
-  void initState() {
-    super.initState();
-    _pageController = PageController();
-
-    _future = context.read<TrendingRepository>().getPerformers();
-  }
+  final PageController _pageController = PageController();
 
   @override
   void dispose() {
@@ -37,66 +24,57 @@ class _TrendingPerformersState extends State<TrendingPerformers> {
 
   @override
   Widget build(BuildContext context) {
+    final HomeController controller = context.watch();
+    final performers = controller.state.performers;
     return Expanded(
-      child: FutureBuilder<EitherListPerformer>(
-        key: ValueKey(_future),
-        future: _future,
-        builder: ((context, snapshot) {
-          if (!snapshot.hasData) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-          return snapshot.data!.when(
-            left: (_) => RequestFail(
-              onRetry: () {
-                setState(() {
-                  _future = context.read<TrendingRepository>().getPerformers();
-                });
+        child: performers.when(
+      loading: () => const Center(
+        child: CircularProgressIndicator(),
+      ),
+      failed: () => RequestFail(
+        onRetry: () {
+          controller.loadPerformers(
+            performers: const PerformersState.loading(),
+          );
+        },
+      ),
+      loaded: (list) => Stack(
+        alignment: Alignment.bottomCenter,
+        children: [
+          PageView.builder(
+            controller: _pageController,
+            itemCount: list.length,
+            scrollDirection: Axis.horizontal,
+            itemBuilder: ((context, index) {
+              final performer = list[index];
+              return PerformerTile(performer: performer);
+            }),
+          ),
+          Positioned(
+            bottom: 30,
+            child: AnimatedBuilder(
+              animation: _pageController,
+              builder: (_, __) {
+                final int _currentCard = _pageController.page?.toInt() ?? 0;
+                return Row(
+                  children: List.generate(
+                    list.length,
+                    (index) => Icon(
+                      Icons.circle,
+                      color:
+                          _currentCard == index ? Colors.blue : Colors.white30,
+                      size: 14,
+                    ),
+                  ),
+                );
               },
             ),
-            right: (list) => Stack(
-              alignment: Alignment.bottomCenter,
-              children: [
-                PageView.builder(
-                  controller: _pageController,
-                  itemCount: list.length,
-                  scrollDirection: Axis.horizontal,
-                  itemBuilder: ((context, index) {
-                    final performer = list[index];
-                    return PerformerTile(performer: performer);
-                  }),
-                ),
-                Positioned(
-                  bottom: 30,
-                  child: AnimatedBuilder(
-                    animation: _pageController,
-                    builder: (_, __) {
-                      final int _currentCard =
-                          _pageController.page?.toInt() ?? 0;
-                      return Row(
-                        children: List.generate(
-                          list.length,
-                          (index) => Icon(
-                            Icons.circle,
-                            color: _currentCard == index
-                                ? Colors.blue
-                                : Colors.white30,
-                            size: 14,
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-              ],
-            ),
-          );
-        }),
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+        ],
       ),
-    );
+    ));
   }
 }

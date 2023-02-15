@@ -23,7 +23,7 @@ class Media with _$Media {
         required String title,
     @JsonKey(
       name: 'original_title',
-      readValue: readOriginalTitle,
+      readValue: readOriginalTitleValue,
     )
         required String originalTitle,
     @JsonKey(name: 'poster_path')
@@ -43,7 +43,7 @@ Object? readTitleValue(Map map, String _) {
   return map['title'] ?? map['name'];
 }
 
-Object? readOriginalTitle(Map map, String _) {
+Object? readOriginalTitleValue(Map map, String _) {
   return map['original_title'] ?? map['original_name'];
 }
 
