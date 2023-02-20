@@ -55,14 +55,14 @@ class _TrendingPerformersState extends State<TrendingPerformers> {
             child: AnimatedBuilder(
               animation: _pageController,
               builder: (_, __) {
-                final int _currentCard = _pageController.page?.toInt() ?? 0;
+                final int currentCard = _pageController.page?.toInt() ?? 0;
                 return Row(
                   children: List.generate(
                     list.length,
                     (index) => Icon(
                       Icons.circle,
                       color:
-                          _currentCard == index ? Colors.blue : Colors.white30,
+                          currentCard == index ? Colors.blue : Colors.white30,
                       size: 14,
                     ),
                   ),

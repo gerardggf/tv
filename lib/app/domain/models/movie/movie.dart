@@ -16,7 +16,7 @@ class Movie with _$Movie {
     required int runtime,
     @JsonKey(name: 'poster_path') required String posterPath,
     @JsonKey(name: 'release_date') required DateTime releaseDate,
-    @JsonKey(name: 'voote_average') required double voteAverage,
+    @JsonKey(name: 'vote_average') required double voteAverage,
     @JsonKey(readValue: readTitleValue) required String title,
     @JsonKey(readValue: readOriginalTitleValue) required String originalTitle,
     @JsonKey(name: 'backdrop_path') required String backdropPath,

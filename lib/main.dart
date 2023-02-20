@@ -8,7 +8,7 @@ import 'app/data/http/http.dart';
 import 'app/data/repositories_implementation/account_repository_impl.dart';
 import 'app/data/repositories_implementation/authentication_repostory_impl.dart';
 import 'app/data/repositories_implementation/connectivity_repostory_impl.dart';
-import 'app/data/repositories_implementation/movies_repositopry_impl.dart';
+import 'app/data/repositories_implementation/movies_repository_impl.dart';
 import 'app/data/repositories_implementation/trending_repository_impl.dart';
 import 'app/data/services/local/session_service.dart';
 import 'app/data/services/remote/account_api.dart';
