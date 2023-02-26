@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../global/controllers/favorites/favorites_controller.dart';
 import '../../../../global/controllers/session_controller.dart';
 import '../../../../routes/routes.dart';
 import '../../controller/sign_in_controller.dart';
@@ -53,7 +54,9 @@ class SubmitButton extends StatelessWidget {
       },
       right: (user) {
         final SessionController sessionController = context.read();
+        final FavoriteController favoriteController = context.read();
         sessionController.setUser(user);
+        favoriteController.init();
         Navigator.pushReplacementNamed(
           context,
           Routes.home,

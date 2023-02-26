@@ -55,9 +55,9 @@ class _MovieCastState extends State<MovieCast> {
           right: (cast) => Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Padding(
-                padding: const EdgeInsets.all(15),
-                child: const Text(
+              const Padding(
+                padding: EdgeInsets.all(15),
+                child: Text(
                   'Cast',
                   style: TextStyle(
                     fontSize: 16,
