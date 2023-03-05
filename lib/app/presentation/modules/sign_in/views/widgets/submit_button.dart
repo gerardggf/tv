@@ -54,7 +54,7 @@ class SubmitButton extends StatelessWidget {
       },
       right: (user) {
         final SessionController sessionController = context.read();
-        final FavoriteController favoriteController = context.read();
+        final FavoritesController favoriteController = context.read();
         sessionController.setUser(user);
         favoriteController.init();
         Navigator.pushReplacementNamed(

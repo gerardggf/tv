@@ -87,8 +87,8 @@ void main() {
             authenticationRepository: context.read(),
           ),
         ),
-        ChangeNotifierProvider<FavoriteController>(
-          create: (context) => FavoriteController(
+        ChangeNotifierProvider<FavoritesController>(
+          create: (context) => FavoritesController(
             FavoritesState.loading(),
             accountRepository: context.read(),
           ),

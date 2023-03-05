@@ -3,8 +3,8 @@ import '../../../../domain/repositories/account_repository.dart';
 import '../../state_notifier.dart';
 import 'state/favorites_state.dart';
 
-class FavoriteController extends StateNotifier<FavoritesState> {
-  FavoriteController(
+class FavoritesController extends StateNotifier<FavoritesState> {
+  FavoritesController(
     super.state, {
     required this.accountRepository,
   });
@@ -12,6 +12,8 @@ class FavoriteController extends StateNotifier<FavoritesState> {
   final AccountRepository accountRepository;
 
   Future<void> init() async {
+    state = FavoritesState.loading();
+
     final moviesResult = await accountRepository.getFavorites(MediaType.movie);
 
     state = await moviesResult.when(

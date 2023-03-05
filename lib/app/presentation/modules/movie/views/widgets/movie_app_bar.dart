@@ -10,7 +10,7 @@ class MovieAppBar extends StatelessWidget with PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     final MovieController controller = context.watch();
-    final FavoriteController favoriteController = context.watch();
+    final FavoritesController favoriteController = context.watch();
 
     return AppBar(
       backgroundColor: Colors.transparent,

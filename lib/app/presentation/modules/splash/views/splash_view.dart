@@ -30,7 +30,7 @@ class _SplashViewState extends State<SplashView> {
       final AuthenticationRepository authenticationRepository = context.read();
       final AccountRepository accountRepository = context.read();
       final SessionController sessionController = context.read();
-      final FavoriteController favoriteController = context.read();
+      final FavoritesController favoriteController = context.read();
 
       final hasInternet = await connectivityRepository.hasInternet;
 
