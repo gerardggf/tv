@@ -40,7 +40,12 @@ class _HomeViewState extends State<HomeView> {
               ),
             ),
             IconButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.pushNamed(
+                  context,
+                  Routes.profile,
+                );
+              },
               icon: const Icon(
                 Icons.person,
                 color: Colors.black,

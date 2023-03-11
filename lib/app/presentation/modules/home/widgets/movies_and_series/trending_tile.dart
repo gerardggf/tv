@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../../domain/models/media/media.dart';
 import '../../../../global/utils/get_image_url.dart';
-import '../../../../routes/routes.dart';
+import '../../../../utils/go_to_media_details.dart';
 
 class TrendingTile extends StatelessWidget {
   const TrendingTile({
@@ -20,15 +20,7 @@ class TrendingTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {
-        if (media.type == MediaType.movie) {
-          Navigator.pushNamed(
-            context,
-            Routes.movie,
-            arguments: media.id,
-          );
-        }
-      },
+      onTap: () => goToMediaDetails(context, media),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(10),
         child: SizedBox(

@@ -65,4 +65,32 @@ class AccountAPI {
       },
     );
   }
+
+  Future<Either<HttpRequestFailure, void>> markAsFavorite({
+    required int mediaId,
+    required MediaType type,
+    required bool favorite,
+  }) async {
+    final accountId = await _sessionService.accountId;
+    final sessionId = await _sessionService.sessionId ?? '';
+
+    final result = await _http.request(
+      '/account/$accountId/favorite',
+      queryParams: {
+        'session_id': sessionId,
+      },
+      body: {
+        'media_type': type.name,
+        'media_id': mediaId,
+        'favorite': favorite,
+      },
+      method: HttpMethod.post,
+      onSuccess: (_) => null,
+    );
+
+    return result.when(
+      left: handleHttpFailure,
+      right: (_) => Either.right(null),
+    );
+  }
 }

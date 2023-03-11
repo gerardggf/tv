@@ -13,6 +13,8 @@ class SignInView extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (_) => SignInController(
         SignInState(),
+        sessionController: context.read(),
+        favoritesController: context.read(),
         authenticationRepository: context.read(),
       ),
       child: Scaffold(
