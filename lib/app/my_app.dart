@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'presentation/global/controllers/theme_controller.dart';
+import 'presentation/global/theme.dart';
 import 'presentation/routes/app_routes.dart';
 import 'presentation/routes/routes.dart';
 
@@ -22,7 +23,7 @@ class _MyAppState extends State<MyApp> {
         FocusManager.instance.primaryFocus?.unfocus();
       },
       child: MaterialApp(
-        theme: themeController.darkMode ? ThemeData.dark() : ThemeData.light(),
+        theme: getTheme(themeController.darkMode),
         initialRoute: Routes.splash,
         routes: appRoutes,
       ),

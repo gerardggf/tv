@@ -2,14 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../global/controllers/theme_controller.dart';
+import '../../../global/extensions/build_context_extension.dart';
 
 class ProfileView extends StatelessWidget {
   const ProfileView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final ThemeController themeController = context.watch();
-    final bool darkMode = themeController.darkMode;
     return Scaffold(
       appBar: AppBar(),
       body: SafeArea(
@@ -19,9 +18,9 @@ class ProfileView extends StatelessWidget {
             children: [
               SwitchListTile(
                 title: const Text('Dark mode'),
-                value: darkMode,
+                value: context.darkMode,
                 onChanged: (value) {
-                  themeController.onChanged(value);
+                  context.read<ThemeController>().onChanged(value);
                 },
               ),
             ],

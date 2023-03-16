@@ -14,6 +14,7 @@ class MovieAppBar extends StatelessWidget with PreferredSizeWidget {
     final FavoritesController favoriteController = context.watch();
 
     return AppBar(
+      iconTheme: const IconThemeData(color: Colors.white),
       backgroundColor: Colors.transparent,
       actions: controller.state.mapOrNull(
         loaded: (movieState) => [
