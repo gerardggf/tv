@@ -6,6 +6,7 @@ import 'colors.dart';
 ThemeData getTheme(bool darkMode) {
   if (darkMode) {
     final darkTheme = ThemeData.dark();
+    final textTheme = darkTheme.textTheme;
 
     return darkTheme.copyWith(
       appBarTheme: const AppBarTheme(
@@ -23,11 +24,20 @@ ThemeData getTheme(bool darkMode) {
         ),
       ),
       textTheme: GoogleFonts.nunitoSansTextTheme(
-        darkTheme.textTheme,
+        textTheme.copyWith(
+          titleSmall: textTheme.titleSmall?.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
+          titleMedium: textTheme.titleMedium?.copyWith(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
       ),
     );
   }
   final lightTheme = ThemeData.light();
+  final textTheme = lightTheme.textTheme;
   return lightTheme.copyWith(
     appBarTheme: const AppBarTheme(
       backgroundColor: Colors.white,
@@ -39,9 +49,14 @@ ThemeData getTheme(bool darkMode) {
       labelColor: AppColors.dark,
     ),
     textTheme: GoogleFonts.nunitoSansTextTheme(
-      lightTheme.textTheme.copyWith(
-        titleSmall: const TextStyle(
+      textTheme.copyWith(
+        titleSmall: textTheme.titleSmall?.copyWith(
           color: AppColors.dark,
+          fontWeight: FontWeight.bold,
+        ),
+        titleMedium: textTheme.titleMedium?.copyWith(
+          color: AppColors.dark,
+          fontSize: 18,
           fontWeight: FontWeight.bold,
         ),
       ),
