@@ -48,6 +48,12 @@ void main() async {
 
   final preferences = await SharedPreferences.getInstance();
 
+  final connectivity = ConnectivityRepositoryImpl(
+    Connectivity(),
+    InternetChecker(),
+  );
+  await connectivity.initialize();
+
   runApp(
     MultiProvider(
       providers: [
@@ -65,12 +71,7 @@ void main() async {
           },
         ),
         Provider<ConnectivityRepository>(
-          create: (_) {
-            return ConnectivityRepositoryImpl(
-              Connectivity(),
-              InternetChecker(),
-            );
-          },
+          create: (_) => connectivity,
         ),
         Provider<AuthenticationRepository>(
           create: (_) {

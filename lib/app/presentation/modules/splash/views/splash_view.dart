@@ -32,7 +32,7 @@ class _SplashViewState extends State<SplashView> {
       final SessionController sessionController = context.read();
       final FavoritesController favoriteController = context.read();
 
-      final hasInternet = await connectivityRepository.hasInternet;
+      final hasInternet = connectivityRepository.hasInternet;
 
       if (!hasInternet) {
         return Routes.offline;

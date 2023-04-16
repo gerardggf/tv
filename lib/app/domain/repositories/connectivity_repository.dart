@@ -1,3 +1,5 @@
 abstract class ConnectivityRepository {
-  Future<bool> get hasInternet;
+  Future<void> initialize();
+  bool get hasInternet;
+  Stream<bool> get onInternetChanged;
 }
