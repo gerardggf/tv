@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../global/widgets/my_scaffold.dart';
 import '../../../routes/routes.dart';
 import '../controller/home_controller.dart';
 import '../controller/state/home_state.dart';
@@ -22,7 +23,7 @@ class _HomeViewState extends State<HomeView> {
         HomeState(),
         trendingRepository: context.read(),
       )..init(),
-      child: Scaffold(
+      child: MyScaffold(
         appBar: AppBar(
           actions: [
             IconButton(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../generated/translations.g.dart';
 import '../controller/sign_in_controller.dart';
 import '../controller/state/sign_in_state.dart';
 import 'widgets/submit_button.dart';
@@ -38,11 +39,13 @@ class SignInView extends StatelessWidget {
                           text = text?.trim().toLowerCase() ?? '';
 
                           if (text.isEmpty) {
-                            return 'Invalid username';
+                            return texts.signIn.errors.username;
                           }
                           return null;
                         },
-                        decoration: const InputDecoration(hintText: 'username'),
+                        decoration: InputDecoration(
+                          hintText: texts.signIn.username,
+                        ),
                       ),
                       const SizedBox(
                         height: 20,
@@ -56,11 +59,13 @@ class SignInView extends StatelessWidget {
                           text = text?.replaceAll(' ', '') ?? '';
 
                           if (text.length < 4) {
-                            return 'Invalid password';
+                            return texts.signIn.errors.password;
                           }
                           return null;
                         },
-                        decoration: const InputDecoration(hintText: 'password'),
+                        decoration: InputDecoration(
+                          hintText: texts.signIn.password,
+                        ),
                       ),
                       const SizedBox(
                         height: 20,

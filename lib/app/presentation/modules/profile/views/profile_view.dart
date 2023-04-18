@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../global/controllers/session_controller.dart';
 import '../../../global/controllers/theme_controller.dart';
 import '../../../global/extensions/build_context_extension.dart';
+import '../../../routes/routes.dart';
 
 class ProfileView extends StatelessWidget {
   const ProfileView({super.key});
@@ -22,6 +24,17 @@ class ProfileView extends StatelessWidget {
                 onChanged: (value) {
                   context.read<ThemeController>().onChanged(value);
                 },
+              ),
+              ListTile(
+                onTap: () {
+                  context.read<SessionController>().signOut();
+                  Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    Routes.signIn,
+                    (route) => false,
+                  );
+                },
+                title: const Text('Sign out'),
               ),
             ],
           ),

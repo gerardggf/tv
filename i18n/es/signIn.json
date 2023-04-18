@@ -1,0 +1,16 @@
+{
+    "username":"Usuario",
+    "password":"Contraseña",
+    "errors":{
+        "username":"Usuario inválido",
+        "password":"Contraseña inválida",
+        "submit":{
+            "notFound":"No encontrado",
+            "network":"WError de red",
+            "unauthorized": "Contraseña inválida ",
+            "unknown": "Error",
+            "notVerified": "Correo electrónico no verificado"
+        }
+    },
+    "signIn":"Iniciar sesión"
+}

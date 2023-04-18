@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../../domain/enums.dart';
+import '../../../../../generated/translations.g.dart';
 import '../../../../global/colors.dart';
 import '../../../../global/extensions/build_context_extension.dart';
 
@@ -21,7 +22,7 @@ class TrendingTimeWindow extends StatelessWidget {
       child: Row(
         children: [
           Text(
-            'TRENDING',
+            texts.home.trending,
             style: context.textTheme.titleSmall,
           ),
           const Spacer(),
@@ -36,14 +37,14 @@ class TrendingTimeWindow extends StatelessWidget {
                   underline: const SizedBox(),
                   isDense: true,
                   value: timeWindow,
-                  items: const [
+                  items: [
                     DropdownMenuItem(
                       value: TimeWindow.day,
-                      child: Text('Last 24 hours'),
+                      child: Text(texts.home.dropdownButton.last24),
                     ),
                     DropdownMenuItem(
                       value: TimeWindow.week,
-                      child: Text('Last week'),
+                      child: Text(texts.home.dropdownButton.lastWeek),
                     ),
                   ],
                   onChanged: (mTimeWindow) {

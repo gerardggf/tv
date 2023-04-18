@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../generated/assets.gen.dart';
+import '../../../generated/translations.g.dart';
 
 class RequestFail extends StatelessWidget {
   const RequestFail({
@@ -22,14 +23,14 @@ class RequestFail extends StatelessWidget {
           Expanded(
             child: Assets.svg.error.svg(),
           ),
-          Text(text ?? 'Request failed'),
+          Text(text ?? texts.misc.requestFailed),
           const SizedBox(
             height: 10,
           ),
           MaterialButton(
             onPressed: onRetry,
             color: Colors.blue,
-            child: const Text('Retry'),
+            child: Text(texts.misc.retry),
           ),
           const SizedBox(
             height: 10,

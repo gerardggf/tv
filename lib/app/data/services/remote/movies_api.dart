@@ -13,6 +13,9 @@ class MoviesAPI {
   Future<Either<HttpRequestFailure, Movie>> getMovieById(int id) async {
     final result = await _http.request(
       '/movie/$id',
+      queryParams: {
+        'language': 'es',
+      },
       onSuccess: (json) {
         return Movie.fromJson(json);
       },

@@ -17,6 +17,9 @@ class TrendingAPI {
   ) async {
     final result = await _http.request(
       '/trending/all/${timeWindow.name}',
+      queryParams: {
+        'language': 'es',
+      },
       onSuccess: (json) {
         final list = List<Json>.from(json['results']);
 

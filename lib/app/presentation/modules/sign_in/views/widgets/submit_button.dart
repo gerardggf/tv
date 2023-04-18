@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../../generated/translations.g.dart';
 import '../../../../routes/routes.dart';
 import '../../controller/sign_in_controller.dart';
 
@@ -21,7 +22,7 @@ class SubmitButton extends StatelessWidget {
         }
       },
       color: Colors.blue,
-      child: const Text('Sign in'),
+      child: Text(texts.signIn.signIn),
     );
   }
 
@@ -37,11 +38,11 @@ class SubmitButton extends StatelessWidget {
     result.when(
       left: (failure) {
         final message = failure.when(
-          notFound: () => 'Not found',
-          network: () => 'Network error',
-          unauthorized: () => 'Invalid password',
-          unknown: () => 'Error',
-          notVerified: () => 'Email not verified',
+          notFound: () => texts.signIn.errors.submit.notFound,
+          network: () => texts.signIn.errors.submit.network,
+          unauthorized: () => texts.signIn.errors.submit.unauthorized,
+          unknown: () => texts.signIn.errors.submit.unknown,
+          notVerified: () => texts.signIn.errors.submit.notVerified,
         );
 
         ScaffoldMessenger.of(context).showSnackBar(
