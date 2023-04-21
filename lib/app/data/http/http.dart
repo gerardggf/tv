@@ -33,6 +33,7 @@ class Http {
     Map<String, String> headers = const {},
     Map<String, String> queryParams = const {},
     bool useApiKey = true,
+    String languageCode = 'en',
     Map<String, dynamic> body = const {},
     Duration timeout = const Duration(seconds: 10),
   }) async {
@@ -47,7 +48,10 @@ class Http {
       );
       if (queryParams.isNotEmpty) {
         url = url.replace(
-          queryParameters: queryParams,
+          queryParameters: {
+            ...queryParams,
+            'language': languageCode,
+          },
         );
       }
       headers = {

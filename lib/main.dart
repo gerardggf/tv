@@ -4,6 +4,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -11,9 +12,11 @@ import 'app/data/http/http.dart';
 import 'app/data/repositories_implementation/account_repository_impl.dart';
 import 'app/data/repositories_implementation/authentication_repostory_impl.dart';
 import 'app/data/repositories_implementation/connectivity_repostory_impl.dart';
+import 'app/data/repositories_implementation/language_repository_impl.dart';
 import 'app/data/repositories_implementation/movies_repository_impl.dart';
 import 'app/data/repositories_implementation/preferences_repository_impl.dart';
 import 'app/data/repositories_implementation/trending_repository_impl.dart';
+import 'app/data/services/local/language_service.dart';
 import 'app/data/services/local/session_service.dart';
 import 'app/data/services/remote/account_api.dart';
 import 'app/data/services/remote/authentication_api.dart';
@@ -23,6 +26,7 @@ import 'app/data/services/remote/trending_api.dart';
 import 'app/domain/repositories/account_repository.dart';
 import 'app/domain/repositories/authentication_repository.dart';
 import 'app/domain/repositories/connectivity_repository.dart';
+import 'app/domain/repositories/language_repository.dart';
 import 'app/domain/repositories/movies_repository.dart';
 import 'app/domain/repositories/preference_repository.dart';
 import 'app/domain/repositories/trending_repository.dart';
@@ -36,16 +40,22 @@ import 'app/presentation/global/controllers/theme_controller.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   LocaleSettings.useDeviceLocale();
+  Intl.defaultLocale = LocaleSettings.currentLocale.languageTag;
 
   final sessionService = SessionService(
     const FlutterSecureStorage(),
   );
+
+  final languageService = LanguageService(
+    LocaleSettings.currentLocale.languageCode,
+  );
+
   final http = Http(
     client: Client(),
     baseUrl: 'https://api.themoviedb.org/3',
     apiKey: 'f41a23c2b3c209cdb9845a666c1143b5',
   );
-  final accountAPI = AccountAPI(http, sessionService);
+  final accountAPI = AccountAPI(http, sessionService, languageService);
 
   final systemDarkMode = ui.window.platformBrightness == Brightness.dark;
 
@@ -73,6 +83,9 @@ void main() async {
             );
           },
         ),
+        Provider<LanguageRepository>(
+          create: (_) => LanguageRepositoryImpl(languageService),
+        ),
         Provider<ConnectivityRepository>(
           create: (_) => connectivity,
         ),
@@ -88,14 +101,20 @@ void main() async {
         Provider<TrendingRepository>(
           create: (_) {
             return TrendingRepositoryImpl(
-              TrendingAPI(http),
+              TrendingAPI(
+                http,
+                languageService,
+              ),
             );
           },
         ),
         Provider<MoviesRepository>(
           create: (_) {
             return MoviesRepositoryImpl(
-              MoviesAPI(http),
+              MoviesAPI(
+                http,
+                languageService,
+              ),
             );
           },
         ),
