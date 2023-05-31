@@ -1,10 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 import '../../../../domain/repositories/connectivity_repository.dart';
 import '../../../routes/routes.dart';
+import '../../../service_locator/service_locator.dart';
 
 class OfflineView extends StatefulWidget {
   const OfflineView({super.key});
@@ -20,8 +20,10 @@ class _OfflineViewState extends State<OfflineView> {
   void initState() {
     super.initState();
 
-    _streamSubscription =
-        context.read<ConnectivityRepository>().onInternetChanged.listen(
+    _streamSubscription = ServiceLocator.instance
+        .find<ConnectivityRepository>()
+        .onInternetChanged
+        .listen(
       (connected) {
         if (connected) {
           Navigator.pushReplacementNamed(context, Routes.splash);
