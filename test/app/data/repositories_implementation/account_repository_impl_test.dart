@@ -1,25 +1,35 @@
 import 'dart:convert';
-import 'dart:typed_data';
 
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart';
+import 'package:mockito/mockito.dart';
 import 'package:tv/app/data/http/http.dart';
 import 'package:tv/app/data/repositories_implementation/account_repository_impl.dart';
 import 'package:tv/app/data/services/local/language_service.dart';
 import 'package:tv/app/data/services/local/session_service.dart';
 import 'package:tv/app/data/services/remote/account_api.dart';
+import 'package:tv/app/domain/failures/http_request/http_request_failure.dart';
+import 'package:tv/app/domain/models/media/media.dart';
+import 'package:tv/app/domain/repositories/account_repository.dart';
+
+import '../../../mocks.dart';
 
 void main() {
-  test(
-    'AccountRepositoryImpl',
-    () async {
+  late MockClient client;
+  late MockFlutterSecureStorage secureStorage;
+
+  late AccountRepository repository;
+  setUp(
+    () {
+      client = MockClient();
+      secureStorage = MockFlutterSecureStorage();
+
       final sessionService = SessionService(
-        MockFlutterSecureStorage(),
+        secureStorage,
       );
       final accountApi = AccountAPI(
         Http(
-          client: MockClient(),
+          client: client,
           baseUrl: 'https://api.themoviedb.org/3',
           apiKey: 'f41a23c2b3c209cdb9845a666c1143b5',
         ),
@@ -27,193 +37,187 @@ void main() {
         LanguageService('en'),
       );
 
-      final repo = AccountRepositoryImpl(
+      repository = AccountRepositoryImpl(
         accountApi,
         sessionService,
       );
-
-      final user = await repo.getUserData();
-      expect(user, isNotNull);
     },
   );
-}
 
-class MockClient implements Client {
-  @override
-  void close() {
-    // TODO: implement close
-  }
-
-  @override
-  Future<Response> delete(Uri url,
-      {Map<String, String>? headers, Object? body, Encoding? encoding}) {
-    // TODO: implement delete
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<Response> get(Uri url, {Map<String, String>? headers}) {
-    return Future.value(
-      Response(
+  void mockGet({
+    required int statusCode,
+    required Map<String, dynamic> json,
+  }) {
+    when(
+      client.get(
+        any,
+        headers: anyNamed('headers'),
+      ),
+    ).thenAnswer(
+      (_) async => Response(
         jsonEncode(
-          {
-            'id': 0,
-            'username': 'Darwin',
-            'avatar': {
-              'tmdb': {
-                'avatar_path': '/tahdh.png',
-              },
-            },
-          },
+          json,
         ),
-        200,
+        statusCode,
       ),
     );
   }
 
-  @override
-  Future<Response> head(Uri url, {Map<String, String>? headers}) {
-    // TODO: implement head
-    throw UnimplementedError();
-  }
+  test(
+    'AccountRepositoryImpl > getUserData',
+    () async {
+      when(
+        secureStorage.read(key: sessionIdKey),
+      ).thenAnswer(
+        (_) => Future.value('sessionId'),
+      );
 
-  @override
-  Future<Response> patch(Uri url,
-      {Map<String, String>? headers, Object? body, Encoding? encoding}) {
-    // TODO: implement patch
-    throw UnimplementedError();
-  }
+      mockGet(
+        statusCode: 200,
+        json: {
+          'id': 123,
+          'username': 'darwin',
+          'avatar': {},
+        },
+      );
 
-  @override
-  Future<Response> post(Uri url,
-      {Map<String, String>? headers, Object? body, Encoding? encoding}) {
-    // TODO: implement post
-    throw UnimplementedError();
-  }
+      final user = await repository.getUserData();
+      expect(user, isNotNull);
+    },
+  );
 
-  @override
-  Future<Response> put(Uri url,
-      {Map<String, String>? headers, Object? body, Encoding? encoding}) {
-    // TODO: implement put
-    throw UnimplementedError();
-  }
+  test(
+    'AccountRepositoryImpl > getFavorites > fail',
+    () async {
+      mockGet(
+        statusCode: 401,
+        json: {
+          'status_code': 3,
+          'status_message': '',
+        },
+      );
 
-  @override
-  Future<String> read(Uri url, {Map<String, String>? headers}) {
-    // TODO: implement read
-    throw UnimplementedError();
-  }
+      final result = await repository.getFavorites(
+        MediaType.movie,
+      );
+      expect(
+        result.value is HttpRequestFailure,
+        true,
+      );
 
-  @override
-  Future<Uint8List> readBytes(Uri url, {Map<String, String>? headers}) {
-    // TODO: implement readBytes
-    throw UnimplementedError();
-  }
+      expect(
+        result.value,
+        isA<HttpRequestFailure>(),
+      );
+    },
+  );
 
-  @override
-  Future<StreamedResponse> send(BaseRequest request) {
-    // TODO: implement send
-    throw UnimplementedError();
-  }
-}
+  test(
+    'AccountRepositoryImpl > getFavorites > success',
+    () async {
+      mockGet(
+        statusCode: 200,
+        json: {
+          'page': 1,
+          'results': [
+            {
+              'backdrop_path': '/mWGLIaVFXyalsSbstiwletjKFUC.jpg',
+              'genre_ids': [18, 80],
+              'id': 31586,
+              'origin_country': ['US'],
+              'original_language': 'es',
+              'original_name': 'La Reina del Sur',
+              'overview': '',
+              'popularity': 98.377,
+              'poster_path': '/p11t8ckTC6EiuVw5FGFKdc2Z7GH.jpg',
+              'first_air_date': '2011-02-28',
+              'name': 'La Reina del Sur',
+              'vote_average': 7.839,
+              'vote_count': 1736,
+            },
+          ],
+          'total_pages': 3,
+          'total_results': 52,
+        },
+      );
 
-class MockFlutterSecureStorage implements FlutterSecureStorage {
-  @override
-  // TODO: implement aOptions
-  AndroidOptions get aOptions => throw UnimplementedError();
+      final result = await repository.getFavorites(
+        MediaType.movie,
+      );
 
-  @override
-  Future<bool> containsKey(
-      {required String key,
-      IOSOptions? iOptions,
-      AndroidOptions? aOptions,
-      LinuxOptions? lOptions,
-      WebOptions? webOptions,
-      MacOsOptions? mOptions,
-      WindowsOptions? wOptions}) {
-    // TODO: implement containsKey
-    throw UnimplementedError();
-  }
+      expect(
+        result.value,
+        isA<Map<int, Media>>(),
+      );
+    },
+  );
 
-  @override
-  Future<void> delete(
-      {required String key,
-      IOSOptions? iOptions,
-      AndroidOptions? aOptions,
-      LinuxOptions? lOptions,
-      WebOptions? webOptions,
-      MacOsOptions? mOptions,
-      WindowsOptions? wOptions}) {
-    // TODO: implement delete
-    throw UnimplementedError();
-  }
+  test(
+    'AccountRepositoryImpl > markAsFavorite > success',
+    () async {
+      when(
+        client.post(
+          any,
+          headers: anyNamed('headers'),
+          body: anyNamed('body'),
+        ),
+      ).thenAnswer(
+        (_) async {
+          return Response(
+              jsonEncode(
+                {
+                  'status_code': 12,
+                  'status_message': '',
+                },
+              ),
+              201);
+        },
+      );
+      final result = await repository.markAsFavorite(
+        mediaId: 1234,
+        type: MediaType.movie,
+        favorite: true,
+      );
 
-  @override
-  Future<void> deleteAll(
-      {IOSOptions? iOptions,
-      AndroidOptions? aOptions,
-      LinuxOptions? lOptions,
-      WebOptions? webOptions,
-      MacOsOptions? mOptions,
-      WindowsOptions? wOptions}) {
-    // TODO: implement deleteAll
-    throw UnimplementedError();
-  }
+      expect(
+        result.value,
+        isA(),
+      );
+    },
+  );
 
-  @override
-  // TODO: implement iOptions
-  IOSOptions get iOptions => throw UnimplementedError();
+  test(
+    'AccountRepositoryImpl > markAsFavorite > fail',
+    () async {
+      when(
+        client.post(
+          any,
+          headers: anyNamed('headers'),
+          body: anyNamed('body'),
+        ),
+      ).thenAnswer(
+        (_) async {
+          return Response(
+            jsonEncode(
+              {
+                'status_code': 34,
+                'status_message': '',
+              },
+            ),
+            404,
+          );
+        },
+      );
+      final result = await repository.markAsFavorite(
+        mediaId: 1234,
+        type: MediaType.movie,
+        favorite: true,
+      );
 
-  @override
-  // TODO: implement lOptions
-  LinuxOptions get lOptions => throw UnimplementedError();
-
-  @override
-  // TODO: implement mOptions
-  MacOsOptions get mOptions => throw UnimplementedError();
-
-  @override
-  Future<String?> read(
-      {required String key,
-      IOSOptions? iOptions,
-      AndroidOptions? aOptions,
-      LinuxOptions? lOptions,
-      WebOptions? webOptions,
-      MacOsOptions? mOptions,
-      WindowsOptions? wOptions}) {
-    return Future.value(null);
-  }
-
-  @override
-  Future<Map<String, String>> readAll(
-      {IOSOptions? iOptions,
-      AndroidOptions? aOptions,
-      LinuxOptions? lOptions,
-      WebOptions? webOptions,
-      MacOsOptions? mOptions,
-      WindowsOptions? wOptions}) {
-    // TODO: implement readAll
-    throw UnimplementedError();
-  }
-
-  @override
-  // TODO: implement wOptions
-  WindowsOptions get wOptions => throw UnimplementedError();
-
-  @override
-  // TODO: implement webOptions
-  WebOptions get webOptions => throw UnimplementedError();
-
-  @override
-  Future<void> write(
-      {required String key,
-      required String? value,
-      IOSOptions? iOptions,
-      AndroidOptions? aOptions,
-      LinuxOptions? lOptions,
-      WebOptions? webOptions,
-      MacOsOptions? mOptions,
-      WindowsOptions? wOptions}) {
-    return Future.value();
-  }
+      expect(
+        result.value is HttpRequestFailure,
+        true,
+      );
+    },
+  );
 }
