@@ -8,6 +8,7 @@ import 'inject_repositories.dart';
 import 'presentation/global/controllers/theme_controller.dart';
 import 'presentation/global/theme.dart';
 import 'presentation/routes/app_routes.dart';
+import 'presentation/routes/router.dart';
 
 //TODO: flutter_gen not working, so I deactivated it
 
@@ -24,7 +25,8 @@ class MyApp extends StatefulWidget {
   State<MyApp> createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
+class _MyAppState extends State<MyApp>
+    with WidgetsBindingObserver, RouterMixin {
   @override
   void initState() {
     super.initState();
