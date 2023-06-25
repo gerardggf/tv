@@ -2,9 +2,11 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:tv/app/presentation/service_locator/service_locator.dart';
 
 void main() {
-  tearDown(() {
-    ServiceLocator.instance.clear();
-  });
+  tearDown(
+    () {
+      ServiceLocator.instance.clear();
+    },
+  );
   test(
     'ServiceLocator > put',
     () {
@@ -14,7 +16,10 @@ void main() {
         },
         throwsAssertionError,
       );
-      final name = ServiceLocator.instance.put<String>('Darwin');
+
+      final name = ServiceLocator.instance.put<String>(
+        'Darwin',
+      );
       expect(
         name,
         ServiceLocator.instance.find<String>(),
@@ -26,23 +31,30 @@ void main() {
     'ServiceLocator > put 2',
     () {
       ServiceLocator.instance.put('Darwin');
-      ServiceLocator.instance.put('Santiago', tag: 'name2');
+      ServiceLocator.instance.put(
+        'Santiago',
+        tag: 'name2',
+      );
       final user = ServiceLocator.instance.put(
-        User('Lulu'),
+        IUser('Lulu'),
       );
 
-      final name = ServiceLocator.instance.find<String>(tag: 'name2');
+      final name = ServiceLocator.instance.find<String>(
+        tag: 'name2',
+      );
+      expect(ServiceLocator.instance.find<IUser>(), user);
 
-      expect(ServiceLocator.instance.find<User>(), user);
-
-      expect(ServiceLocator.instance.find<String>(), 'Darwin');
+      expect(
+        ServiceLocator.instance.find<String>(),
+        'Darwin',
+      );
       expect(name, 'Santiago');
     },
   );
 }
 
-class User {
+class IUser {
   final String name;
 
-  User(this.name);
+  IUser(this.name);
 }

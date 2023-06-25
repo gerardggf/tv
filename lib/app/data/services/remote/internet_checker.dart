@@ -1,3 +1,4 @@
+// coverage:ignore-file
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
@@ -16,9 +17,6 @@ class InternetChecker {
         return list.isNotEmpty && list.first.rawAddress.isNotEmpty;
       }
     } catch (e) {
-      if (kDebugMode) {
-        print(e);
-      }
       return false;
     }
   }

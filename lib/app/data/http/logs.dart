@@ -1,18 +1,32 @@
 part of 'http.dart';
 
-void _printLogs(Map<String, dynamic> logs, StackTrace? stackTrace) {
+@visibleForTesting
+bool showHttpErrors = true;
+
+void _printLogs(
+  Map<String, dynamic> logs,
+  StackTrace? stackTrace,
+) {
   if (kDebugMode) {
+    // coverage:ignore-start
     if (Platform.environment.containsKey('FLUTTER_TEST') &&
-        logs.containsKey('exception')) {
+        logs.containsKey('exception') &&
+        showHttpErrors) {
       print(
         const JsonEncoder.withIndent('  ').convert(logs),
       );
       print(stackTrace);
     }
-    log('''
-----------------------------------------------------------------------
-        ${const JsonEncoder.withIndent('  ').convert(logs)}
-----------------------------------------------------------------------
-''', stackTrace: stackTrace);
+    // coverage:ignore-end
+    log(
+      '''
+🔥
+--------------------------------
+${const JsonEncoder.withIndent('  ').convert(logs)}
+--------------------------------
+🔥
+''',
+      stackTrace: stackTrace,
+    );
   }
 }

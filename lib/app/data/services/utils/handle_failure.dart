@@ -9,7 +9,7 @@ Either<HttpRequestFailure, R> handleHttpFailure<R>(HttpFailure httpFailure) {
       case 404:
         return HttpRequestFailure.notFound();
       case 401:
-        return HttpRequestFailure.unknown();
+        return HttpRequestFailure.unauthorized();
     }
     if (httpFailure.exception is NetworkException) {
       return HttpRequestFailure.network();

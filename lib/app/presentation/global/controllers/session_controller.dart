@@ -14,7 +14,7 @@ class SessionController extends StateNotifier<User?> {
   }
 
   Future<void> signOut() async {
-    authenticationRepository.signOut;
+    await authenticationRepository.signOut();
     onlyUpdate(null);
   }
 }

@@ -1,13 +1,12 @@
-import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../../domain/models/movie/movie.dart';
-import '../../../../global/extensions/build_context_extension.dart';
+import '../../../../global/extensions/build_context_ext.dart';
 import '../../../../global/utils/get_image_url.dart';
+import '../../../../global/widgets/network_image.dart';
 
 class MovieHeader extends StatelessWidget {
   const MovieHeader({super.key, required this.movie});
-
   final Movie movie;
 
   @override
@@ -17,8 +16,8 @@ class MovieHeader extends StatelessWidget {
         AspectRatio(
           aspectRatio: 16 / 13,
           child: movie.backdropPath != null
-              ? ExtendedImage.network(
-                  getImageUrl(
+              ? MyNetworkImage(
+                  url: getImageUrl(
                     movie.backdropPath!,
                     imageQuality: ImageQuality.original,
                   ),
@@ -37,16 +36,18 @@ class MovieHeader extends StatelessWidget {
           child: Container(
             decoration: const BoxDecoration(
               gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
                 colors: [
                   Colors.transparent,
                   Colors.black54,
                   Colors.black,
                 ],
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
               ),
             ),
-            padding: const EdgeInsets.all(15).copyWith(top: 25),
+            padding: const EdgeInsets.all(15).copyWith(
+              top: 25,
+            ),
             child: Row(
               children: [
                 Expanded(
@@ -55,22 +56,24 @@ class MovieHeader extends StatelessWidget {
                     children: [
                       Text(
                         movie.title,
-                        style: context.textTheme.titleMedium
-                            ?.copyWith(color: Colors.white),
+                        style: context.textTheme.titleMedium?.copyWith(
+                          color: Colors.white,
+                        ),
                       ),
-                      const SizedBox(
-                        height: 10,
-                      ),
+                      const SizedBox(height: 10),
                       Wrap(
                         spacing: 10,
                         children: movie.genres
                             .map(
                               (e) => Container(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 7),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 5,
+                                ),
                                 decoration: BoxDecoration(
-                                  border: Border.all(color: Colors.white),
                                   borderRadius: BorderRadius.circular(4),
+                                  border: Border.all(
+                                    color: Colors.white,
+                                  ),
                                 ),
                                 child: Text(
                                   e.name,
@@ -81,7 +84,7 @@ class MovieHeader extends StatelessWidget {
                               ),
                             )
                             .toList(),
-                      ),
+                      )
                     ],
                   ),
                 ),
@@ -92,6 +95,7 @@ class MovieHeader extends StatelessWidget {
                       width: 70,
                       height: 70,
                       child: CircularProgressIndicator(
+                        key: const Key('vote-average'),
                         value: (movie.voteAverage / 10).clamp(0.0, 1.0),
                       ),
                     ),

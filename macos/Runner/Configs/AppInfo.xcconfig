@@ -8,7 +8,7 @@
 PRODUCT_NAME = tv
 
 // The application's bundle identifier
-PRODUCT_BUNDLE_IDENTIFIER = app.sanfaina.tv
+PRODUCT_BUNDLE_IDENTIFIER = app.meedu.tv
 
 // The copyright displayed in application information
-PRODUCT_COPYRIGHT = Copyright © 2022 app.sanfaina. All rights reserved.
+PRODUCT_COPYRIGHT = Copyright © 2022 app.meedu. All rights reserved.

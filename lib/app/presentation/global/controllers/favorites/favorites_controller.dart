@@ -10,7 +10,6 @@ class FavoritesController extends StateNotifier<FavoritesState> {
     super.state, {
     required this.accountRepository,
   });
-
   final AccountRepository accountRepository;
 
   Future<void> init() async {
@@ -67,7 +66,6 @@ class FavoritesController extends StateNotifier<FavoritesState> {
               );
       },
     );
-
     return result;
   }
 }

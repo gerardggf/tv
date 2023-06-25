@@ -7,10 +7,11 @@ import 'package:http/http.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_strategy/url_strategy.dart';
 
 import 'app/data/http/http.dart';
 import 'app/data/services/remote/internet_checker.dart';
-import 'app/domain/repositories/preference_repository.dart';
+import 'app/domain/repositories/preferences_repository.dart';
 import 'app/generated/translations.g.dart';
 import 'app/inject_repositories.dart';
 import 'app/my_app.dart';
@@ -18,8 +19,11 @@ import 'app/presentation/global/controllers/favorites/favorites_controller.dart'
 import 'app/presentation/global/controllers/favorites/state/favorites_state.dart';
 import 'app/presentation/global/controllers/session_controller.dart';
 import 'app/presentation/global/controllers/theme_controller.dart';
+import 'app/presentation/routes/routes.dart';
 
+// coverage:ignore-start
 void main() async {
+  setPathUrlStrategy();
   WidgetsFlutterBinding.ensureInitialized();
   LocaleSettings.useDeviceLocale();
   Intl.defaultLocale = LocaleSettings.currentLocale.languageTag;
@@ -27,7 +31,7 @@ void main() async {
   final http = Http(
     client: Client(),
     baseUrl: 'https://api.themoviedb.org/3',
-    apiKey: 'f41a23c2b3c209cdb9845a666c1143b5',
+    apiKey: '4248991ee7e5702debde74e854effa57',
   );
 
   final systemDarkMode = ui.window.platformBrightness == Brightness.dark;
@@ -37,13 +41,29 @@ void main() async {
     http: http,
     languageCode: LocaleSettings.currentLocale.languageCode,
     secureStorage: const FlutterSecureStorage(),
-    sharedPreferences: await SharedPreferences.getInstance(),
+    preferences: await SharedPreferences.getInstance(),
     connectivity: Connectivity(),
     internetChecker: InternetChecker(),
   );
 
   runApp(
-    MultiProvider(
+    const Root(),
+  );
+}
+// coverage:ignore-end
+
+class Root extends StatelessWidget {
+  const Root({
+    super.key,
+    this.initialRoute = Routes.splash,
+    this.appRoutes,
+  });
+  final String initialRoute;
+  final Map<String, WidgetBuilder>? appRoutes;
+
+  @override
+  Widget build(BuildContext context) {
+    return MultiProvider(
       providers: [
         ChangeNotifierProvider<ThemeController>(
           create: (context) {
@@ -68,8 +88,11 @@ void main() async {
         ),
       ],
       child: TranslationProvider(
-        child: const MyApp(),
+        child: MyApp(
+          initialRoute: initialRoute,
+          appRoutes: appRoutes,
+        ),
       ),
-    ),
-  );
+    );
+  }
 }

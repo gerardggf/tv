@@ -36,11 +36,15 @@ class SignInController extends StateNotifier<SignInState> {
   }
 
   Future<Either<SignInFailure, User>> submit() async {
+    assert(state.username.isNotEmpty);
+    assert(state.password.isNotEmpty);
+
     state = state.copyWith(fetching: true);
     final result = await authenticationRepository.signIn(
       state.username,
       state.password,
     );
+
     result.when(
       left: (_) => state = state.copyWith(fetching: false),
       right: (user) {

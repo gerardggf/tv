@@ -17,15 +17,17 @@ class _SplashViewState extends State<SplashView> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _init();
-    });
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) {
+        _init();
+      },
+    );
   }
 
   Future<void> _init() async {
     final routeName = await () async {
       final SessionController sessionController = context.read();
-      final FavoritesController favoriteController = context.read();
+      final FavoritesController favoritesController = context.read();
 
       final hasInternet = Repositories.connectivity.hasInternet;
 
@@ -43,7 +45,7 @@ class _SplashViewState extends State<SplashView> {
 
       if (user != null) {
         sessionController.setUser(user);
-        favoriteController.init();
+        favoritesController.init();
         return Routes.home;
       }
 

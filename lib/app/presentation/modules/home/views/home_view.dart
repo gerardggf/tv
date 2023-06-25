@@ -6,8 +6,8 @@ import '../../../global/widgets/my_scaffold.dart';
 import '../../../routes/routes.dart';
 import '../controller/home_controller.dart';
 import '../controller/state/home_state.dart';
-import '../widgets/movies_and_series/trending_list.dart';
-import '../widgets/performers/trending_performers.dart';
+import 'widgets/movies_and_series/trending_list.dart';
+import 'widgets/performers/trending_performers.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -30,12 +30,10 @@ class _HomeViewState extends State<HomeView> {
         appBar: AppBar(
           actions: [
             IconButton(
-              onPressed: () {
-                Navigator.pushNamed(
-                  context,
-                  Routes.favorites,
-                );
-              },
+              onPressed: () => Navigator.pushNamed(
+                context,
+                Routes.favorites,
+              ),
               icon: const Icon(
                 Icons.favorite,
               ),
@@ -54,26 +52,27 @@ class _HomeViewState extends State<HomeView> {
           ],
         ),
         body: SafeArea(
-            child: LayoutBuilder(
-          builder: (context, constraints) => RefreshIndicator(
-            onRefresh: context.read<HomeController>().init,
-            child: SingleChildScrollView(
-              physics: const AlwaysScrollableScrollPhysics(),
-              child: SizedBox(
-                height: constraints.maxHeight,
-                child: Column(
-                  children: const [
-                    SizedBox(height: 10),
-                    TrendingList(),
-                    SizedBox(height: 20),
-                    TrendingPerformers(),
-                    SizedBox(height: 10),
-                  ],
+          child: LayoutBuilder(
+            builder: (context, constraints) => RefreshIndicator(
+              onRefresh: context.read<HomeController>().init,
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: SizedBox(
+                  height: constraints.maxHeight,
+                  child: Column(
+                    children: const [
+                      SizedBox(height: 10),
+                      TrendingList(),
+                      SizedBox(height: 20),
+                      TrendingPerformers(),
+                      SizedBox(height: 10),
+                    ],
+                  ),
                 ),
               ),
             ),
           ),
-        )),
+        ),
       ),
     );
   }

@@ -11,28 +11,31 @@ class MovieAppBar extends StatelessWidget with PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     final MovieController controller = context.watch();
-    final FavoritesController favoriteController = context.watch();
+    final FavoritesController favoritesController = context.watch();
 
     return AppBar(
-      iconTheme: const IconThemeData(color: Colors.white),
+      iconTheme: const IconThemeData(
+        color: Colors.white,
+      ),
       backgroundColor: Colors.transparent,
       actions: controller.state.mapOrNull(
         loaded: (movieState) => [
-          favoriteController.state.maybeMap(
+          favoritesController.state.maybeMap(
             orElse: () => const SizedBox(),
-            loaded: (favoriteState) => IconButton(
+            loaded: (favoritesState) => IconButton(
+              key: const Key('favorite-button'),
               onPressed: () => markAsFavorite(
                 context: context,
                 media: movieState.movie.toMedia(),
                 mounted: () => controller.mounted,
               ),
               icon: Icon(
-                favoriteState.movies.containsKey(movieState.movie.id)
+                favoritesState.movies.containsKey(movieState.movie.id)
                     ? Icons.favorite
                     : Icons.favorite_outline,
               ),
             ),
-          )
+          ),
         ],
       ),
     );

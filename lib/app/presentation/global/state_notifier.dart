@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 
 abstract class StateNotifier<State> extends ChangeNotifier {
   StateNotifier(this._state) : _oldState = _state;
@@ -25,10 +25,9 @@ abstract class StateNotifier<State> extends ChangeNotifier {
     if (_state != newState) {
       _oldState = _state;
       _state = newState;
-    }
-
-    if (notify) {
-      notifyListeners();
+      if (notify) {
+        notifyListeners();
+      }
     }
   }
 

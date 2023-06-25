@@ -2,7 +2,7 @@ import '../../../domain/either/either.dart';
 import '../../../domain/enums.dart';
 import '../../../domain/failures/http_request/http_request_failure.dart';
 import '../../../domain/models/media/media.dart';
-import '../../../domain/models/performer/performer.dart';
+import '../../../domain/models/peformer/performer.dart';
 import '../../../domain/typedefs.dart';
 import '../../http/http.dart';
 import '../local/language_service.dart';
@@ -10,12 +10,12 @@ import '../utils/handle_failure.dart';
 
 class TrendingAPI {
   final Http _http;
+  final LanguageService _languageService;
 
   TrendingAPI(
     this._http,
     this._languageService,
   );
-  final LanguageService _languageService;
 
   Future<Either<HttpRequestFailure, List<Media>>> getMoviesAndSeries(
     TimeWindow timeWindow,
@@ -25,7 +25,6 @@ class TrendingAPI {
       languageCode: _languageService.languageCode,
       onSuccess: (json) {
         final list = List<Json>.from(json['results']);
-
         return getMediaList(list);
       },
     );
@@ -43,7 +42,6 @@ class TrendingAPI {
       languageCode: _languageService.languageCode,
       onSuccess: (json) {
         final list = List<Json>.from(json['results']);
-
         return list
             .where(
               (e) =>

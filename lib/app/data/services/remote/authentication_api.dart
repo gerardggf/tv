@@ -6,6 +6,7 @@ class AuthenticationAPI {
   AuthenticationAPI(this._http);
 
   final Http _http;
+
   Either<SignInFailure, String> _handleFailure(HttpFailure failure) {
     if (failure.statusCode != null) {
       switch (failure.statusCode!) {
@@ -16,21 +17,21 @@ class AuthenticationAPI {
               SignInFailure.notVerified(),
             );
           }
+
           return Either.left(
             SignInFailure.unauthorized(),
           );
-
         case 404:
           return Either.left(
             SignInFailure.notFound(),
           );
-
         default:
           return Either.left(
             SignInFailure.unknown(),
           );
       }
     }
+
     if (failure.exception is NetworkException) {
       return Either.left(
         SignInFailure.network(),
@@ -49,12 +50,11 @@ class AuthenticationAPI {
         return json['request_token'] as String;
       },
     );
-
     return result.when(
       left: _handleFailure,
-      right: (requestToken) {
-        return Either.right(requestToken);
-      },
+      right: (requestToken) => Either.right(
+        requestToken,
+      ),
     );
   }
 
@@ -65,45 +65,46 @@ class AuthenticationAPI {
   }) async {
     final result = await _http.request(
       '/authentication/token/validate_with_login',
-      onSuccess: (responseBody) {
-        final json = responseBody as Map;
-
-        return json['request_token'] as String;
-      },
       method: HttpMethod.post,
       body: {
         'username': username,
         'password': password,
-        'request_token': requestToken
+        'request_token': requestToken,
+      },
+      onSuccess: (responseBody) {
+        final json = responseBody as Map;
+        return json['request_token'] as String;
       },
     );
 
     return result.when(
       left: _handleFailure,
-      right: (newRequestToken) {
-        return Either.right(newRequestToken);
-      },
+      right: (newRequestToken) => Either.right(
+        newRequestToken,
+      ),
     );
   }
 
   Future<Either<SignInFailure, String>> createSession(
-      String requestToken) async {
+    String requestToken,
+  ) async {
     final result = await _http.request(
       '/authentication/session/new',
-      onSuccess: ((responseBody) {
-        final json = responseBody as Map;
-
-        return json['session_id'] as String;
-      }),
       method: HttpMethod.post,
-      body: {'request_token': requestToken},
+      body: {
+        'request_token': requestToken,
+      },
+      onSuccess: (responseBody) {
+        final json = responseBody as Map;
+        return json['session_id'] as String;
+      },
     );
 
     return result.when(
       left: _handleFailure,
-      right: (sessionId) {
-        return Either.right(sessionId);
-      },
+      right: (sessionId) => Either.right(
+        sessionId,
+      ),
     );
   }
 }

@@ -20,7 +20,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
-  sdk: '>=2.18.5 <3.0.0'
+  sdk: '>=2.18.4 <3.0.0'
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -33,36 +33,38 @@ dependencies:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
-
+  # The following adds the Cupertino Icons font to your application.
+  # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
   connectivity_plus: ^3.0.2
   http: ^0.13.5
-  flutter_secure_storage: ^7.0.1
-  provider: ^6.0.5
+  flutter_secure_storage: ^6.0.0
+  provider: ^6.0.4
   equatable: ^2.0.5
   json_annotation: ^4.7.0
   freezed_annotation: ^2.2.0
-  extended_image: ^7.0.0
-  google_fonts: ^4.0.3
-  shared_preferences: ^2.0.20
-  slang: ^3.16.1
-  slang_flutter: ^3.16.0
+  extended_image: ^6.3.4
+  flutter_svg: ^1.1.6
+  url_strategy: ^0.2.0
+  google_fonts: ^3.0.1
+  shared_preferences: ^2.0.15
+  slang: ^3.7.0
+  slang_flutter: ^3.7.0
   intl: ^0.17.0
-  
+  cached_network_image: ^3.2.3
+
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
   flutter_lints: ^2.0.0
-  build_runner: ^2.3.3
+  build_runner: ^2.3.2
   json_serializable: ^6.5.4
-  freezed: ^2.3.2
-  flutter_svg: ^2.0.0+1
-  flutter_gen: ^5.2.0
-  flutter_gen_runner: ^5.2.0
-  slang_build_runner: ^3.16.0
-  mockito: ^5.4.0
+  freezed: ^2.3.0
+  flutter_gen: ^5.1.0+1
+  slang_build_runner: ^3.7.0
+  mockito: ^5.3.2
+  path_provider_platform_interface: ^2.0.5
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -77,8 +79,8 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - assets/images/error.png
-    - assets/svg/error.svg
+    - assets/images/
+    - assets/svgs/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
@@ -105,8 +107,7 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
-  
 flutter_gen:
-  output: lib/app/generated #especificamos donde queremos que se guarden los archivos generados por flutter_gen
+  output: lib/app/generated/
   integrations:
     flutter_svg: true

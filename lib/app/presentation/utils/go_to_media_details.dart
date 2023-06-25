@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 
 import '../../domain/models/media/media.dart';
-import '../routes/routes.dart';
+import '../modules/movie/views/movie_view.dart';
 
-//TODO: pendiente implementar navegación a pantalla con series
 Future<void> goToMediaDetails(BuildContext context, Media media) async {
   if (media.type == MediaType.movie) {
-    await Navigator.pushNamed(
+    await Navigator.push(
       context,
-      Routes.movie,
-      arguments: media.id,
+      MaterialPageRoute(
+        builder: (_) => MovieView(
+          movieId: media.id,
+        ),
+      ),
     );
   }
 }

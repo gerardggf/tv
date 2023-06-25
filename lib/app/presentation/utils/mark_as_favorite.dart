@@ -10,10 +10,10 @@ Future<void> markAsFavorite({
   required Media media,
   required bool Function() mounted,
 }) async {
-  final FavoritesController favoriteController = context.read();
+  final FavoritesController favoritesController = context.read();
   final result = await showLoader(
     context,
-    favoriteController.markAsFavorite(media),
+    favoritesController.markAsFavorite(media),
   );
 
   if (!mounted()) {
@@ -24,11 +24,10 @@ Future<void> markAsFavorite({
     left: (failure) {
       final errorMessage = failure.when(
         notFound: () => 'Resource not found',
-        network: () => 'Network error',
+        network: () => 'Network Error',
         unauthorized: () => 'Unauthorized',
         unknown: () => 'Unknown error',
       );
-
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(errorMessage),

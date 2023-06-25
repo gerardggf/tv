@@ -8,13 +8,13 @@ class MyScaffold extends StatelessWidget {
     required this.body,
     this.appBar,
   });
-
   final Widget body;
   final PreferredSizeWidget? appBar;
 
   @override
   Widget build(BuildContext context) {
     final connectivityRepository = Repositories.connectivity;
+
     return Scaffold(
       appBar: appBar,
       body: SizedBox(
@@ -41,7 +41,9 @@ class MyScaffold extends StatelessWidget {
                           child: const Text(
                             'No internet',
                             textAlign: TextAlign.center,
-                            style: TextStyle(color: Colors.white),
+                            style: TextStyle(
+                              color: Colors.white,
+                            ),
                           ),
                         )
                       : const SizedBox(),

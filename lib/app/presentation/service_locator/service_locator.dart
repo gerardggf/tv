@@ -6,10 +6,7 @@ class ServiceLocator {
 
   final _data = <String, dynamic>{};
 
-  String _getKey(
-    Type type,
-    String? tag,
-  ) {
+  String _getKey(Type type, String? tag) {
     return '${type.toString()}${tag ?? ''}';
   }
 
@@ -26,7 +23,7 @@ class ServiceLocator {
   }) {
     final key = _getKey(T, tag);
     assert(_data.containsKey(key), '$key not found');
-    return _data[key];
+    return _data[key]!;
   }
 
   void clear() {

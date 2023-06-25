@@ -1,7 +1,7 @@
 {
-    "trending":"TENDENCIAS",
-    "dropdownButton":{
-        "last24":"Últimas 24h",
-        "lastWeek":"Última semana"
-    }
+  "trending": "TENDENCIAS",
+  "dropdownButton": {
+    "last24": "Últimas 24h",
+    "lastWeek": "Última semana"
+  }
 }

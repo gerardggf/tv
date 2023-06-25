@@ -14,13 +14,11 @@ class AccountRepositoryImpl implements AccountRepository {
 
   final AccountAPI _accountAPI;
   final SessionService _sessionService;
-
   @override
   Future<User?> getUserData() async {
     final user = await _accountAPI.getAccount(
       await _sessionService.sessionId ?? '',
     );
-
     if (user != null) {
       await _sessionService.saveAccountId(
         user.id.toString(),
@@ -31,7 +29,8 @@ class AccountRepositoryImpl implements AccountRepository {
 
   @override
   Future<Either<HttpRequestFailure, Map<int, Media>>> getFavorites(
-      MediaType type) {
+    MediaType type,
+  ) {
     return _accountAPI.getFavorites(type);
   }
 

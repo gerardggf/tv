@@ -14,16 +14,6 @@ ThemeData getTheme(bool darkMode) {
         backgroundColor: AppColors.dark,
         elevation: 0,
       ),
-      scaffoldBackgroundColor: AppColors.darkLight,
-      canvasColor: AppColors.dark,
-      switchTheme: SwitchThemeData(
-        thumbColor: MaterialStateProperty.all(
-          Colors.blue,
-        ),
-        trackColor: MaterialStateProperty.all(
-          Colors.lightBlue.withOpacity(0.5),
-        ),
-      ),
       textTheme: GoogleFonts.nunitoSansTextTheme(
         textTheme.copyWith(
           titleSmall: textTheme.titleSmall?.merge(boldStyle),
@@ -32,25 +22,30 @@ ThemeData getTheme(bool darkMode) {
           bodySmall: textTheme.bodySmall?.merge(whiteStyle),
         ),
       ),
+      scaffoldBackgroundColor: AppColors.darkLight,
+      canvasColor: AppColors.dark,
+      switchTheme: SwitchThemeData(
+        trackColor: MaterialStateProperty.all(
+          Colors.lightBlue.withOpacity(0.5),
+        ),
+        thumbColor: MaterialStateProperty.all(
+          Colors.blue,
+        ),
+      ),
     );
   }
+
   final lightTheme = ThemeData.light();
   final textTheme = lightTheme.textTheme;
   const boldStyle = TextStyle(
     fontWeight: FontWeight.bold,
     color: AppColors.dark,
   );
-  const darkStyle = TextStyle(color: Colors.black);
+  const darkStyle = TextStyle(
+    color: AppColors.dark,
+  );
+
   return lightTheme.copyWith(
-    appBarTheme: const AppBarTheme(
-      backgroundColor: Colors.white,
-      elevation: 0,
-      iconTheme: IconThemeData(color: AppColors.dark),
-      titleTextStyle: TextStyle(color: AppColors.dark),
-    ),
-    tabBarTheme: const TabBarTheme(
-      labelColor: AppColors.dark,
-    ),
     textTheme: GoogleFonts.nunitoSansTextTheme(
       textTheme.copyWith(
         titleSmall: textTheme.titleSmall?.merge(boldStyle),
@@ -58,6 +53,19 @@ ThemeData getTheme(bool darkMode) {
         titleLarge: textTheme.titleLarge?.merge(boldStyle),
         bodySmall: textTheme.bodySmall?.merge(darkStyle),
       ),
+    ),
+    appBarTheme: const AppBarTheme(
+      backgroundColor: Colors.white,
+      elevation: 0,
+      iconTheme: IconThemeData(
+        color: AppColors.dark,
+      ),
+      titleTextStyle: TextStyle(
+        color: AppColors.dark,
+      ),
+    ),
+    tabBarTheme: const TabBarTheme(
+      labelColor: AppColors.dark,
     ),
   );
 }

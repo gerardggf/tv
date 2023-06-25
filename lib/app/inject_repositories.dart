@@ -4,8 +4,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'data/http/http.dart';
 import 'data/repositories_implementation/account_repository_impl.dart';
-import 'data/repositories_implementation/authentication_repostory_impl.dart';
-import 'data/repositories_implementation/connectivity_repostory_impl.dart';
+import 'data/repositories_implementation/authentication_repository_impl.dart';
+import 'data/repositories_implementation/connectivity_repository_impl.dart';
 import 'data/repositories_implementation/language_repository_impl.dart';
 import 'data/repositories_implementation/movies_repository_impl.dart';
 import 'data/repositories_implementation/preferences_repository_impl.dart';
@@ -22,7 +22,7 @@ import 'domain/repositories/authentication_repository.dart';
 import 'domain/repositories/connectivity_repository.dart';
 import 'domain/repositories/language_repository.dart';
 import 'domain/repositories/movies_repository.dart';
-import 'domain/repositories/preference_repository.dart';
+import 'domain/repositories/preferences_repository.dart';
 import 'domain/repositories/trending_repository.dart';
 import 'presentation/service_locator/service_locator.dart';
 
@@ -31,14 +31,19 @@ Future<void> injectRepositories({
   required Http http,
   required String languageCode,
   required FlutterSecureStorage secureStorage,
-  required SharedPreferences sharedPreferences,
+  required SharedPreferences preferences,
   required Connectivity connectivity,
   required InternetChecker internetChecker,
 }) async {
   final sessionService = SessionService(secureStorage);
   final languageService = LanguageService(languageCode);
-  final accountAPI = AccountAPI(http, sessionService, languageService);
-  final authenticationApi = AuthenticationAPI(http);
+  final accountAPI = AccountAPI(
+    http,
+    sessionService,
+    languageService,
+  );
+
+  final authenticationAPI = AuthenticationAPI(http);
 
   ServiceLocator.instance.put<AccountRepository>(
     AccountRepositoryImpl(
@@ -53,7 +58,7 @@ Future<void> injectRepositories({
 
   ServiceLocator.instance.put<PreferencesRepository>(
     PreferencesRepositoryImpl(
-      sharedPreferences,
+      preferences,
       systemDarkMode,
     ),
   );
@@ -66,46 +71,52 @@ Future<void> injectRepositories({
     ),
   );
 
-  await connectivityRepository.initialize();
-
   ServiceLocator.instance.put<AuthenticationRepository>(
     AuthenticationRepositoryImpl(
-      authenticationApi,
-      sessionService,
+      authenticationAPI,
       accountAPI,
+      sessionService,
     ),
   );
 
   ServiceLocator.instance.put<TrendingRepository>(
     TrendingRepositoryImpl(
-      TrendingAPI(
-        http,
-        languageService,
-      ),
+      TrendingAPI(http, languageService),
     ),
   );
 
   ServiceLocator.instance.put<MoviesRepository>(
     MoviesRepositoryImpl(
-      MoviesAPI(
-        http,
-        languageService,
-      ),
+      MoviesAPI(http, languageService),
     ),
   );
+
+  await connectivityRepository.initialize();
 }
 
 class Repositories {
-  Repositories._();
+  Repositories._(); // coverage:ignore-line
 
   static AccountRepository get account => ServiceLocator.instance.find();
-  static LanguageRepository get language => ServiceLocator.instance.find();
-  static PreferencesRepository get preferences =>
-      ServiceLocator.instance.find();
-  static AuthenticationRepository get authentication =>
-      ServiceLocator.instance.find();
-  static TrendingRepository get trending => ServiceLocator.instance.find();
-  static MoviesRepository get movies => ServiceLocator.instance.find();
+
+  ///
   static ConnectivityRepository get connectivity =>
       ServiceLocator.instance.find();
+
+  ///
+  static LanguageRepository get language => ServiceLocator.instance.find();
+
+  ///
+  static PreferencesRepository get preferences =>
+      ServiceLocator.instance.find();
+
+  ///
+  static AuthenticationRepository get authentication =>
+      ServiceLocator.instance.find();
+
+  ///
+  static TrendingRepository get trending => ServiceLocator.instance.find();
+
+  ///
+  static MoviesRepository get movies => ServiceLocator.instance.find();
 }

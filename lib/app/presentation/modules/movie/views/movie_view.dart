@@ -2,18 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../inject_repositories.dart';
-import '../../../global/widgets/request_fail.dart';
+import '../../../global/widgets/request_failed.dart';
 import '../controller/movie_controller.dart';
 import '../controller/state/movie_state.dart';
 import 'widgets/movie_app_bar.dart';
 import 'widgets/movie_content.dart';
 
-class MoviewView extends StatelessWidget {
-  const MoviewView({
+class MovieView extends StatelessWidget {
+  const MovieView({
     super.key,
     required this.movieId,
   });
-
   final int movieId;
 
   @override
@@ -21,8 +20,8 @@ class MoviewView extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (_) => MovieController(
         MovieState.loading(),
-        moviesRepository: Repositories.movies,
         movieId: movieId,
+        moviesRepository: Repositories.movies,
       )..init(),
       builder: (context, _) {
         final MovieController controller = context.watch();
@@ -31,12 +30,12 @@ class MoviewView extends StatelessWidget {
           appBar: const MovieAppBar(),
           body: controller.state.map(
             loading: (_) => const Center(
-              child: CircularProgressIndicator(),
+              child: CircularProgressIndicator(
+                key: Key('movie-loading'),
+              ),
             ),
-            failed: (_) => RequestFail(
-              onRetry: () {
-                controller.init();
-              },
+            failed: (_) => RequestFailed(
+              onRetry: () => controller.init(),
             ),
             loaded: (state) => MovieContent(
               state: state,

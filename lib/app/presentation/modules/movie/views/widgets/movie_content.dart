@@ -5,11 +5,7 @@ import 'movie_cast.dart';
 import 'movie_header.dart';
 
 class MovieContent extends StatelessWidget {
-  const MovieContent({
-    super.key,
-    required this.state,
-  });
-
+  const MovieContent({super.key, required this.state});
   final MovieStateLoaded state;
 
   @override
@@ -21,11 +17,11 @@ class MovieContent extends StatelessWidget {
           MovieHeader(movie: movie),
           Padding(
             padding: const EdgeInsets.all(15),
-            child: Text(movie.overview),
+            child: Text(
+              movie.overview,
+            ),
           ),
-          MovieCast(
-            movieID: movie.id,
-          ),
+          MovieCast(movieId: movie.id),
         ],
       ),
     );

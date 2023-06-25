@@ -14,6 +14,7 @@ class SubmitButton extends StatelessWidget {
     if (controller.state.fetching) {
       return const CircularProgressIndicator();
     }
+
     return MaterialButton(
       onPressed: () {
         final isValid = Form.of(context).validate();

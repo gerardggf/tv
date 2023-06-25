@@ -10,35 +10,40 @@ import 'package:tv/app/data/services/local/session_service.dart';
 import 'package:tv/app/data/services/remote/account_api.dart';
 import 'package:tv/app/domain/failures/http_request/http_request_failure.dart';
 import 'package:tv/app/domain/models/media/media.dart';
-import 'package:tv/app/domain/repositories/account_repository.dart';
 
 import '../../../mocks.dart';
 
 void main() {
   late MockClient client;
   late MockFlutterSecureStorage secureStorage;
+  late AccountRepositoryImpl repository;
 
-  late AccountRepository repository;
   setUp(
     () {
       client = MockClient();
       secureStorage = MockFlutterSecureStorage();
-
       final sessionService = SessionService(
         secureStorage,
       );
-      final accountApi = AccountAPI(
+
+      when(
+        secureStorage.read(key: anyNamed('key')),
+      ).thenAnswer(
+        (_) async => 'lala',
+      );
+
+      final accountAPI = AccountAPI(
         Http(
           client: client,
           baseUrl: 'https://api.themoviedb.org/3',
-          apiKey: 'f41a23c2b3c209cdb9845a666c1143b5',
+          apiKey: '4248991ee7e5702debde74e854effa57',
         ),
         sessionService,
         LanguageService('en'),
       );
 
       repository = AccountRepositoryImpl(
-        accountApi,
+        accountAPI,
         sessionService,
       );
     },
@@ -55,9 +60,7 @@ void main() {
       ),
     ).thenAnswer(
       (_) async => Response(
-        jsonEncode(
-          json,
-        ),
+        jsonEncode(json),
         statusCode,
       ),
     );
@@ -69,7 +72,7 @@ void main() {
       when(
         secureStorage.read(key: sessionIdKey),
       ).thenAnswer(
-        (_) => Future.value('sessionId'),
+        (_) async => 'sessionId',
       );
 
       mockGet(
@@ -100,10 +103,6 @@ void main() {
       final result = await repository.getFavorites(
         MediaType.movie,
       );
-      expect(
-        result.value is HttpRequestFailure,
-        true,
-      );
 
       expect(
         result.value,
@@ -121,23 +120,23 @@ void main() {
           'page': 1,
           'results': [
             {
-              'backdrop_path': '/mWGLIaVFXyalsSbstiwletjKFUC.jpg',
-              'genre_ids': [18, 80],
-              'id': 31586,
-              'origin_country': ['US'],
-              'original_language': 'es',
-              'original_name': 'La Reina del Sur',
+              'backdrop_path': null,
+              'first_air_date': '2007-09-24',
+              'genre_ids': [10759],
+              'id': 1404,
+              'original_language': 'en',
+              'original_name': 'Chuck',
               'overview': '',
-              'popularity': 98.377,
-              'poster_path': '/p11t8ckTC6EiuVw5FGFKdc2Z7GH.jpg',
-              'first_air_date': '2011-02-28',
-              'name': 'La Reina del Sur',
-              'vote_average': 7.839,
-              'vote_count': 1736,
-            },
+              'origin_country': ['US'],
+              'poster_path': '/lala.png',
+              'popularity': 0.125125,
+              'name': 'Chuck',
+              'vote_average': 8.2,
+              'vote_count': 37
+            }
           ],
           'total_pages': 3,
-          'total_results': 52,
+          'total_results': 52
         },
       );
 
@@ -162,26 +161,25 @@ void main() {
           body: anyNamed('body'),
         ),
       ).thenAnswer(
-        (_) async {
-          return Response(
-              jsonEncode(
-                {
-                  'status_code': 12,
-                  'status_message': '',
-                },
-              ),
-              201);
-        },
+        (_) async => Response(
+          jsonEncode(
+            {
+              'status_code': 12,
+              'status_message': '',
+            },
+          ),
+          201,
+        ),
       );
       final result = await repository.markAsFavorite(
-        mediaId: 1234,
+        mediaId: 123,
         type: MediaType.movie,
         favorite: true,
       );
 
       expect(
-        result.value,
-        isA(),
+        result.value is! HttpRequestFailure,
+        true,
       );
     },
   );
@@ -196,20 +194,18 @@ void main() {
           body: anyNamed('body'),
         ),
       ).thenAnswer(
-        (_) async {
-          return Response(
-            jsonEncode(
-              {
-                'status_code': 34,
-                'status_message': '',
-              },
-            ),
-            404,
-          );
-        },
+        (_) async => Response(
+          jsonEncode(
+            {
+              'status_code': 34,
+              'status_message': '',
+            },
+          ),
+          404,
+        ),
       );
       final result = await repository.markAsFavorite(
-        mediaId: 1234,
+        mediaId: 123,
         type: MediaType.movie,
         favorite: true,
       );

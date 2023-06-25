@@ -2,6 +2,10 @@ targets:
   $default:
     builders:
       json_serializable:
+        options:
+          create_to_json: false
+          # preamble: |
+          #       // coverage:ignore-file
         generate_for:
           include:
             - lib/app/domain/models/**/*

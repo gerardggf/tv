@@ -10,4 +10,7 @@ class LanguageRepositoryImpl implements LanguageRepository {
   void setLanguageCode(String code) {
     _service.setLanguageCode(code);
   }
+
+  @override
+  String get languageCode => _service.languageCode;
 }

@@ -21,7 +21,7 @@ class AccountAPI {
   Future<User?> getAccount(String sessionId) async {
     final result = await _http.request(
       '/account',
-      queryParams: {
+      queryParameters: {
         'session_id': sessionId,
       },
       onSuccess: (json) {
@@ -35,12 +35,13 @@ class AccountAPI {
   }
 
   Future<Either<HttpRequestFailure, Map<int, Media>>> getFavorites(
-      MediaType type) async {
+    MediaType type,
+  ) async {
     final sessionId = await _sessionService.sessionId ?? '';
     final accountId = await _sessionService.accountId;
     final result = await _http.request(
       '/account/$accountId/favorite/${type == MediaType.movie ? 'movies' : 'tv'}',
-      queryParams: {
+      queryParameters: {
         'session_id': sessionId,
       },
       languageCode: _languageService.languageCode,
@@ -48,12 +49,10 @@ class AccountAPI {
         final list = json['results'] as List;
         final iterable = list.map(
           (e) {
-            final media = Media.fromJson(
-              {
-                ...e,
-                'media_type': type.name,
-              },
-            );
+            final media = Media.fromJson({
+              ...e,
+              'media_type': type.name,
+            });
             return MapEntry(media.id, media);
           },
         );
@@ -62,11 +61,10 @@ class AccountAPI {
         return map;
       },
     );
+
     return result.when(
       left: handleHttpFailure,
-      right: (value) {
-        return Either.right(value);
-      },
+      right: (value) => Either.right(value),
     );
   }
 
@@ -77,10 +75,9 @@ class AccountAPI {
   }) async {
     final accountId = await _sessionService.accountId;
     final sessionId = await _sessionService.sessionId ?? '';
-
     final result = await _http.request(
       '/account/$accountId/favorite',
-      queryParams: {
+      queryParameters: {
         'session_id': sessionId,
       },
       body: {

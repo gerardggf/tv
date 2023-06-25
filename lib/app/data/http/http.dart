@@ -31,42 +31,45 @@ class Http {
     required R Function(dynamic responseBody) onSuccess,
     HttpMethod method = HttpMethod.get,
     Map<String, String> headers = const {},
-    Map<String, String> queryParams = const {},
+    Map<String, String> queryParameters = const {},
+    Map<String, dynamic> body = const {},
     bool useApiKey = true,
     String languageCode = 'en',
-    Map<String, dynamic> body = const {},
     Duration timeout = const Duration(seconds: 10),
   }) async {
     Map<String, dynamic> logs = {};
     StackTrace? stackTrace;
     try {
       if (useApiKey) {
-        queryParams = {...queryParams, 'api_key': _apiKey};
+        queryParameters = {
+          ...queryParameters,
+          'api_key': _apiKey,
+        };
       }
       Uri url = Uri.parse(
         path.startsWith('http') ? path : '$_baseUrl$path',
       );
-      if (queryParams.isNotEmpty) {
+      if (queryParameters.isNotEmpty) {
         url = url.replace(
           queryParameters: {
-            ...queryParams,
+            ...queryParameters,
             'language': languageCode,
           },
         );
       }
+
       headers = {
-        'Content-type': 'application/json',
+        'Content-Type': 'application/json',
         ...headers,
       };
-
       late final Response response;
       final bodyString = jsonEncode(body);
-
       logs = {
         'url': url.toString(),
         'method': method.name,
         'body': body,
       };
+
       switch (method) {
         case HttpMethod.get:
           response = await _client
@@ -115,8 +118,9 @@ class Http {
       }
 
       final statusCode = response.statusCode;
-      final responseBody = _parseResponseBody(response.body);
-
+      final responseBody = _parseResponseBody(
+        response.body,
+      );
       logs = {
         ...logs,
         'startTime': DateTime.now().toString(),
@@ -126,7 +130,9 @@ class Http {
 
       if (statusCode >= 200 && statusCode < 300) {
         return Either.right(
-          onSuccess(responseBody),
+          onSuccess(
+            responseBody,
+          ),
         );
       }
 
@@ -140,7 +146,7 @@ class Http {
       stackTrace = s;
       logs = {
         ...logs,
-        'exception': e.runtimeType.toString(),
+        'exception': e.toString(),
       };
       if (e is SocketException || e is ClientException) {
         logs = {
@@ -155,14 +161,15 @@ class Http {
       }
 
       return Either.left(
-        HttpFailure(exception: e),
+        HttpFailure(
+          exception: e,
+        ),
       );
     } finally {
       logs = {
         ...logs,
         'endTime': DateTime.now().toString(),
       };
-
       _printLogs(logs, stackTrace);
     }
   }

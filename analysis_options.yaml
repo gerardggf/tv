@@ -13,8 +13,9 @@ analyzer:
   exclude:
     - '**/*.freezed.dart'
     - '**/*.g.dart'
-  errors: 
+  errors:
     invalid_annotation_target: ignore
+  
 
 linter:
   # The lint rules applied to this project can be customized in the
@@ -30,7 +31,7 @@ linter:
   # producing the lint.
   rules:
     prefer_relative_imports: true
-    #sort_constructors_first: true
+    # sort_constructors_first: true
     sort_unnamed_constructors_first: true
     prefer_single_quotes: true
     # avoid_print: false  # Uncomment to disable the `avoid_print` rule

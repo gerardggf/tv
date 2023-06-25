@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../global/controllers/favorites/favorites_controller.dart';
-import '../../../global/widgets/request_fail.dart';
+import '../../../global/widgets/request_failed.dart';
 import 'widgets/favorites_app_bar.dart';
 import 'widgets/favorites_content.dart';
 
@@ -40,10 +40,12 @@ class _FavoritesViewState extends State<FavoritesView>
         tabController: _tabController,
       ),
       body: controller.state.map(
-        loading: (_) => const Center(
-          child: CircularProgressIndicator(),
-        ),
-        failed: (_) => RequestFail(
+        loading: (_) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        },
+        failed: (_) => RequestFailed(
           onRetry: () => controller.init(),
         ),
         loaded: (state) => FavoritesContent(

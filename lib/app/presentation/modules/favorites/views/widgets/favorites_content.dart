@@ -4,9 +4,11 @@ import '../../../../global/controllers/favorites/state/favorites_state.dart';
 import 'favorites_list.dart';
 
 class FavoritesContent extends StatelessWidget {
-  const FavoritesContent(
-      {super.key, required this.state, required this.tabController});
-
+  const FavoritesContent({
+    super.key,
+    required this.state,
+    required this.tabController,
+  });
   final FavoritesStateLoaded state;
   final TabController tabController;
 

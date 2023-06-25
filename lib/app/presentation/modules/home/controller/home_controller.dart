@@ -4,7 +4,10 @@ import '../../../global/state_notifier.dart';
 import 'state/home_state.dart';
 
 class HomeController extends StateNotifier<HomeState> {
-  HomeController(super.state, {required this.trendingRepository});
+  HomeController(
+    super.state, {
+    required this.trendingRepository,
+  });
   final TrendingRepository trendingRepository;
 
   Future<void> init() async {
@@ -12,12 +15,12 @@ class HomeController extends StateNotifier<HomeState> {
     await loadPerformers();
   }
 
-  void onTimeWindowChanged(TimeWindow timeWindow) {
+  Future<void> onTimeWindowChanged(TimeWindow timeWindow) async {
     if (state.moviesAndSeries.timeWindow != timeWindow) {
       state = state.copyWith(
         moviesAndSeries: MoviesAndSeriesState.loading(timeWindow),
       );
-      loadMoviesAndSeries();
+      await loadMoviesAndSeries();
     }
   }
 
@@ -33,21 +36,17 @@ class HomeController extends StateNotifier<HomeState> {
       state.moviesAndSeries.timeWindow,
     );
     state = result.when(
-      left: (_) {
-        return state.copyWith(
-          moviesAndSeries: MoviesAndSeriesState.failed(
-            state.moviesAndSeries.timeWindow,
-          ),
-        );
-      },
-      right: (list) {
-        return state.copyWith(
-          moviesAndSeries: MoviesAndSeriesState.loaded(
-            list: list,
-            timeWindow: state.moviesAndSeries.timeWindow,
-          ),
-        );
-      },
+      left: (_) => state.copyWith(
+        moviesAndSeries: MoviesAndSeriesState.failed(
+          state.moviesAndSeries.timeWindow,
+        ),
+      ),
+      right: (list) => state.copyWith(
+        moviesAndSeries: MoviesAndSeriesState.loaded(
+          list: list,
+          timeWindow: state.moviesAndSeries.timeWindow,
+        ),
+      ),
     );
   }
 
@@ -59,18 +58,14 @@ class HomeController extends StateNotifier<HomeState> {
         performers: performers,
       );
     }
-    final performerResult = await trendingRepository.getPerformers();
-    state = performerResult.when(
-      left: (_) {
-        return state.copyWith(
-          performers: const PerformersState.failed(),
-        );
-      },
-      right: (list) {
-        return state.copyWith(
-          performers: PerformersState.loaded(list),
-        );
-      },
+    final result = await trendingRepository.getPerformers();
+    state = result.when(
+      left: (_) => state.copyWith(
+        performers: const PerformersState.failed(),
+      ),
+      right: (list) => state.copyWith(
+        performers: PerformersState.loaded(list),
+      ),
     );
   }
 }
